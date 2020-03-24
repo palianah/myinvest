@@ -1,28 +1,25 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app>
+    <component v-bind:is="layout"></component>
+  </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import { mapState } from 'vuex'
+import LandingLayout from '@/layouts/Landing'
+import DefaultLayout from './layouts/Default'
 
 export default {
   name: 'App',
+  computed: {
+    ...mapState(['layout'])
+  },
   components: {
-    HelloWorld
+    landing: LandingLayout,
+    default: DefaultLayout
+  },
+  created() {
+    this.$store.dispatch('tryAutoLogin')
   }
 }
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
