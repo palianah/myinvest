@@ -2,37 +2,22 @@
   <div class="dashboard px-5">
     <FinanceGroupTable />
 
-    <!-- <div v-for="group in financeGroups" :key="group.title">
-      <FinanceItemTable
-        v-if="getItemsFromGroup()"
-        :title="group.title"
-        :financeItems="getItemsFromGroup(group.title)"
-      />
-    </div> -->
+    <div v-for="group in financeGroups" :key="group.title">
+      <FinanceItemTable :title="group.title" :item="group.title" />
+    </div>
 
-    <FinanceItemTable
-      v-if="getItemsFromGroup()"
-      :title="financeGroups[0].title"
-      :financeItems="getItemsFromGroup(financeGroups[0].title)"
-    />
+    <!-- <FinanceItemTable :title="financeGroups[0].title" item="P2P" /> -->
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import { filter } from 'lodash'
 import FinanceGroupTable from '@/components/tables/FinanceGroupTable'
 import FinanceItemTable from '@/components/tables/FinanceItemTable'
 
 export default {
   computed: {
-    ...mapState(['financeGroups', 'financeItems']),
-  },
-  methods: {
-    getItemsFromGroup(group) {
-      const item = filter(this.financeItems, { exposition: group })
-      return item
-    },
+    ...mapState(['financeGroups']),
   },
   components: {
     FinanceGroupTable,

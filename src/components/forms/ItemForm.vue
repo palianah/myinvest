@@ -15,38 +15,35 @@
       required
     ></v-text-field>
 
-    <v-text-field
-      v-model="formData.description"
-      label="Description"
-      :rules="emptyRule"
-      required
-    ></v-text-field>
-
     <template v-if="showStockFormData">
       <v-text-field v-model="formData.stockID" label="stockID"></v-text-field>
       <v-text-field v-model="formData.amount" label="Amount"></v-text-field>
       <v-text-field
+        type="number"
         v-model="formData.averageStockPrice"
         label="Bought single stock price"
       ></v-text-field>
     </template>
 
     <v-text-field
+      type="number"
       v-model="formData.totalInvested"
       label="Total Invested Value"
     ></v-text-field>
 
+    <template v-if="editMode">
+      <v-text-field
+        type="number"
+        v-model="formData.currentValue"
+        label="Current Value"
+      ></v-text-field>
+    </template>
+
     <div class="text-center">
-      <v-btn type="submit" min-width="150" large class="ma-2" color="primary">
+      <v-btn type="submit" min-width="150" class="ma-2" color="primary">
         Save
       </v-btn>
-      <v-btn
-        class="ma-2"
-        min-width="150"
-        large
-        color="error"
-        @click="$emit('close')"
-      >
+      <v-btn class="ma-2" min-width="150" color="error" @click="$emit('close')">
         Cancel
       </v-btn>
     </div>
@@ -58,8 +55,12 @@ import { mapGetters } from 'vuex'
 export default {
   props: {
     formProps: {
-      type: [Object, String],
+      type: [Array, Object, String],
       default: '',
+    },
+    editMode: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -72,7 +73,6 @@ export default {
         : {
             exposition: null,
             title: '',
-            description: '',
             stockID: '',
             amount: '',
             averageStockPrice: '',
@@ -93,11 +93,22 @@ export default {
     saveItem() {
       if (this.validate()) {
         // TODO: dispatch statt commit
-        this.$store.commit('UPDATE_FINANCE_ITEM', {
-          ...this.formData,
-          key: new Date(),
-          currentValue: this.formData.totalInvested,
-        })
+        if (!this.editMode) {
+          this.$store.commit('ADD_FINANCE_ITEM', {
+            ...this.formData,
+            key: new Date(), // TODO: firebase key
+            profit: 0,
+            currentValue: this.formData.totalInvested,
+          })
+        } else {
+          this.$store.commit('UPDATE_FINANCE_ITEM', {
+            ...this.formData,
+            key: '', // TODO: get from saved key
+            profit:
+              parseFloat(this.formData.currentValue) -
+              parseFloat(this.formData.totalInvested),
+          })
+        }
         this.$emit('close')
       }
     },

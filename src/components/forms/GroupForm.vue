@@ -20,16 +20,10 @@
     ></v-text-field>
 
     <div class="text-center">
-      <v-btn type="submit" min-width="150" large class="ma-2" color="primary">
+      <v-btn type="submit" min-width="150" class="ma-2" color="primary">
         Save
       </v-btn>
-      <v-btn
-        class="ma-2"
-        min-width="150"
-        large
-        color="error"
-        @click="$emit('close')"
-      >
+      <v-btn class="ma-2" min-width="150" color="error" @click="$emit('close')">
         Cancel
       </v-btn>
     </div>
@@ -40,8 +34,12 @@
 export default {
   props: {
     formProps: {
-      type: [Object, String],
+      type: [Array, Object, String],
       default: '',
+    },
+    editMode: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -61,10 +59,17 @@ export default {
     saveGroup() {
       if (this.validate()) {
         // TODO: dispatch statt commit
-        this.$store.commit('UPDATE_FINANCE_GROUP', {
-          ...this.formData,
-          key: new Date(),
-        })
+        if (!this.editMode) {
+          this.$store.commit('ADD_FINANCE_GROUP', {
+            ...this.formData,
+            key: new Date(),
+          })
+        } else {
+          this.$store.commit('UPDATE_FINANCE_GROUP', {
+            ...this.formData,
+            key: new Date(),
+          })
+        }
         this.$emit('close')
       }
     },

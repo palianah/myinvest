@@ -3,18 +3,23 @@
     <v-btn class="form-dialog__close" icon @click="$emit('close')">
       <v-icon>mdi-close</v-icon>
     </v-btn>
-    <h2>Add {{ formTitle }}</h2>
-    <component v-bind:is="modalComponent" @close="$emit('close')"></component>
+    <h2>{{ formTitle }}</h2>
+    <component
+      v-bind:is="modalComponent"
+      @close="$emit('close')"
+      :editMode="editMode"
+      :formProps="modalItem"
+    ></component>
   </v-dialog>
 </template>
 
 <script>
-import GroupForm from '@/components/GroupForm'
-import ItemForm from '@/components/ItemForm'
+import GroupForm from '@/components/forms/GroupForm'
+import ItemForm from '@/components/forms/ItemForm'
 
 export default {
   props: {
-    dialog: {
+    formOpen: {
       type: Boolean,
       default: false,
     },
@@ -22,9 +27,19 @@ export default {
       type: [Function, Object, String],
       default: '',
     },
+    editMode: {
+      type: Boolean,
+      default: false,
+    },
+    modalItem: [Object, Array, String],
+  },
+  data() {
+    return {
+      isOpen: false,
+    }
   },
   watch: {
-    dialog(newValue) {
+    formOpen(newValue) {
       this.isOpen = newValue
     },
     isOpen(newValue) {
@@ -33,17 +48,19 @@ export default {
       }
     },
   },
-  data() {
-    return {
-      isOpen: false,
-    }
-  },
   computed: {
     formTitle() {
-      if (this.modalComponent === 'group') {
-        return 'Group'
+      if (this.editMode && this.modalComponent === 'item') {
+        return 'Edit Item'
+      } else if (this.editMode && this.modalComponent === 'group') {
+        return 'Edit Group'
       }
-      return 'Item'
+
+      if (this.modalComponent === 'group') {
+        return 'Add Group'
+      } else {
+        return 'Add Item'
+      }
     },
   },
   components: {

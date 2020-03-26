@@ -20,7 +20,7 @@
     </v-list>
 
     <FormDialog
-      :dialog="dialog"
+      :formOpen="formOpen"
       :modalComponent="modalComponent"
       @close="closeModal"
     />
@@ -33,15 +33,20 @@
 </template>
 
 <script>
-import FormDialog from '@/components/FormDialog'
+import FormDialog from '@/components/dialog/FormDialog'
 
 export default {
   data() {
     return {
-      dialog: false,
+      formOpen: false,
       modalComponent: '',
       items: [
-        { id: 'dashboard', title: 'Portfolio', icon: 'mdi-view-dashboard' },
+        {
+          id: 'table',
+          title: 'List-View',
+          icon: 'mdi-format-list-bulleted',
+        },
+        { id: 'chart', title: 'Chart-View', icon: 'mdi-finance' },
         { id: 'examples', title: 'Examples', icon: 'mdi-tablet' },
         { id: 'group', title: 'Add Finance Group', icon: 'mdi-pencil-plus' },
         { id: 'item', title: 'Add Finance Item ', icon: 'mdi-pencil-plus' },
@@ -55,16 +60,26 @@ export default {
     redirectOrOpenModal(id) {
       switch (id) {
         case 'group':
-          this.dialog = true
+          this.formOpen = true
           this.modalComponent = 'group'
           break
         case 'item':
-          this.dialog = true
+          this.formOpen = true
           this.modalComponent = 'item'
           break
         case 'examples':
           if (this.$route.name !== 'examples') {
             this.$router.push({ name: 'examples' })
+          }
+          break
+        case 'table':
+          if (this.$route.name !== 'dashboard') {
+            this.$router.push({ name: 'dashboard' })
+          }
+          break
+        case 'chart':
+          if (this.$route.name !== 'chart-view') {
+            this.$router.push({ name: 'chart-view' })
           }
           break
         default:
@@ -75,7 +90,7 @@ export default {
       }
     },
     closeModal() {
-      this.dialog = false
+      this.formOpen = false
       this.modalComponent = ''
     },
   },

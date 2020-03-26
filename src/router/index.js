@@ -4,6 +4,7 @@ import LandingPage from '@/views/LandingPage'
 import Login from '@/views/Login'
 import Register from '@/views/Register'
 import Dashboard from '@/views/Dashboard'
+import ChartView from '@/views/ChartView'
 import Examples from '@/views/Examples'
 
 Vue.use(VueRouter)
@@ -49,6 +50,18 @@ const routes = [
     path: '/dashboard',
     name: 'dashboard',
     component: Dashboard,
+    beforeEnter: (to, from, next) => {
+      if (!localStorage.getItem('token')) {
+        next({ name: 'home' })
+        return
+      }
+      next()
+    },
+  },
+  {
+    path: '/chart-view',
+    name: 'chart-view',
+    component: ChartView,
     beforeEnter: (to, from, next) => {
       if (!localStorage.getItem('token')) {
         next({ name: 'home' })

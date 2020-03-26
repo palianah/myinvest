@@ -1,95 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { filter } from 'lodash'
+import { filter, findIndex } from 'lodash'
 import AuthService from '@/services/auth.service'
 import DataService from '@/services/data.service'
 import router from '@/router'
-import utilsFormat from '@/utils/formatting'
+import initialState from '@/store/initialState'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  state: {
-    layout: 'landing',
-    idToken: null,
-    userId: null,
-    financeGroups: [
-      {
-        title: 'P2P',
-        description: 'Peer-to-Peer-Lending',
-      },
-      {
-        title: 'ETF',
-        description: 'Exchange traded fund',
-      },
-      {
-        title: 'Stock',
-        description:
-          'Is all of the shares into which ownership of the corporation is divided',
-      },
-      {
-        title: 'Cash',
-        description: 'Is good',
-      },
-    ],
-    financeItems: [
-      {
-        exposition: 'P2P',
-        title: 'Mintos',
-        description: 'mintos...',
-        stockID: null,
-        amount: null,
-        averageStockPrice: null,
-        totalInvested: 13500,
-        currentValue: 13661,
-        profit: 161,
-      },
-      {
-        exposition: 'P2P',
-        title: 'Grupeer',
-        description: 'grupeer...',
-        stockID: null,
-        amount: null,
-        averageStockPrice: null,
-        totalInvested: 2450,
-        currentValue: 2575,
-        profit: 125,
-      },
-      {
-        exposition: 'ETF',
-        title: 'MSCI World',
-        description: 'msci world...',
-        stockID: 12345,
-        amount: 297,
-        averageStockPrice: '19.5',
-        totalInvested: 5790,
-        currentValue: 5250,
-        profit: -540,
-      },
-      {
-        exposition: 'Stock',
-        title: 'AMD',
-        description: 'amd...',
-        stockID: 21345,
-        amount: 350,
-        averageStockPrice: '38',
-        totalInvested: 13300,
-        currentValue: 14890,
-        profit: 1590,
-      },
-      {
-        exposition: 'Cash',
-        title: 'Bank',
-        description: 'cash...',
-        stockID: null,
-        amount: null,
-        averageStockPrice: null,
-        totalInvested: 250,
-        currentValue: 250,
-        profit: 0,
-      },
-    ],
-  },
+  state: initialState,
   mutations: {
     SET_LAYOUT(state, layout) {
       state.layout = layout
@@ -104,21 +24,38 @@ export default new Vuex.Store({
       localStorage.removeItem('token')
       localStorage.removeItem('userId')
     },
-    UPDATE_FINANCE_GROUP(state, groupData) {
+    ADD_FINANCE_GROUP(state, groupData) {
       state.financeGroups.push(groupData)
-      //state.financeGroups[groupData.key] = groupData
     },
-    DELETE_FINANCE_GROUP(state, key) {
+    UPDATE_FINANCE_GROUP(state, groupData) {
+      const index = findIndex(state.financeGroups, { title: groupData.title }) // TODO: change with key!
+      // need to overwrite in a new array because it is not updated if i just change the item itself!
+      const newData = [...state.financeGroups]
+      newData[index] = groupData
+      state.financeGroups = newData
+    },
+    DELETE_FINANCE_GROUP(state, title) {
+      // TODO: delete with key and userId match
       state.financeGroups = state.financeGroups.filter(
-        (item) => item.key !== key
+        (item) => item.title !== title
       )
     },
-    UPDATE_FINANCE_ITEM(state, itemData) {
+    ADD_FINANCE_ITEM(state, itemData) {
+      // TODO: check if itemData.title exists already, if yes, merge values!
       state.financeItems.push(itemData)
-      // state.financeItems[itemData.key] = itemData
     },
-    DELETE_FINANCE_ITEM(state, key) {
-      state.financeItems = state.financeItems.filter((item) => item.key !== key)
+    UPDATE_FINANCE_ITEM(state, itemData) {
+      const index = findIndex(state.financeItems, { title: itemData.title }) // TODO: change with key!
+      // need to overwrite in a new array because it is not updated if i just change the item itself!
+      const newData = [...state.financeItems]
+      newData[index] = itemData
+      state.financeItems = newData
+    },
+    DELETE_FINANCE_ITEM(state, title) {
+      // TODO: delete with key and userId match
+      state.financeItems = state.financeItems.filter(
+        (item) => item.title !== title
+      )
     },
   },
   actions: {
@@ -249,9 +186,9 @@ export default new Vuex.Store({
             currentValue += parseFloat(sub.currentValue)
           })
         }
-        group.totalInvested = utilsFormat.formatPrice(totalInvested)
-        group.currentValue = utilsFormat.formatPrice(currentValue)
-        group.profit = utilsFormat.formatPrice(currentValue - totalInvested)
+        group.totalInvested = totalInvested
+        group.currentValue = currentValue
+        group.profit = currentValue - totalInvested
 
         return group
       })
