@@ -34,10 +34,10 @@
           </span>
         </template>
         <template v-slot:item.actions="{ item }">
-          <v-icon @click="editGroup(item)" :title="item.actions"
+          <v-icon @click.stop="editGroup(item)" :title="item.actions"
             >mdi-pencil</v-icon
           >
-          <v-icon @click="deleteGroup(item)" :title="item.actions"
+          <v-icon @click.stop="deleteGroup(item)" :title="item.actions"
             >mdi-delete</v-icon
           >
         </template>
@@ -79,7 +79,13 @@ export default {
         { text: 'Description', value: 'description', width: '300' },
         { text: 'Total invested', value: 'totalInvested' },
         { text: 'Profit', value: 'profit', width: '150' },
-        { text: 'Actions', value: 'actions', width: '100' },
+        {
+          text: 'Actions',
+          value: 'actions',
+          width: '100',
+          align: 'right',
+          sortable: false,
+        },
       ],
     }
   },

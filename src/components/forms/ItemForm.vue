@@ -16,12 +16,20 @@
     ></v-text-field>
 
     <template v-if="showStockFormData">
-      <v-text-field v-model="formData.stockID" label="stockID"></v-text-field>
-      <v-text-field v-model="formData.amount" label="Amount"></v-text-field>
+      <v-text-field
+        type="number"
+        v-model="formData.stockID"
+        label="stockID"
+      ></v-text-field>
+      <v-text-field
+        type="number"
+        v-model="formData.amount"
+        label="Amount"
+      ></v-text-field>
       <v-text-field
         type="number"
         v-model="formData.averageStockPrice"
-        label="Bought single stock price"
+        label="Average stock price"
       ></v-text-field>
     </template>
 
@@ -81,12 +89,16 @@ export default {
     }
   },
   watch: {
-    'formData.exposition'(val) {
-      if (val.toLowerCase() === 'etf' || val.toLowerCase() === 'stock') {
-        this.showStockFormData = true
-      } else {
-        this.showStockFormData = false
-      }
+    'formData.exposition': {
+      immediate: true,
+      handler(val) {
+        if (!val) return
+        if (val.toLowerCase() === 'etf' || val.toLowerCase() === 'stock') {
+          this.showStockFormData = true
+        } else {
+          this.showStockFormData = false
+        }
+      },
     },
   },
   methods: {

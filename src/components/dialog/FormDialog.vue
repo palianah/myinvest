@@ -16,6 +16,8 @@
 <script>
 import GroupForm from '@/components/forms/GroupForm'
 import ItemForm from '@/components/forms/ItemForm'
+import ItemAddForm from '@/components/forms/ItemAddForm'
+import ItemExtractForm from '@/components/forms/ItemExtractForm'
 
 export default {
   props: {
@@ -54,18 +56,26 @@ export default {
         return 'Edit Item'
       } else if (this.editMode && this.modalComponent === 'group') {
         return 'Edit Group'
+      } else if (this.editMode && this.modalComponent === 'item-add') {
+        return `Buy more ${this.modalItem.exposition}s from ${this.modalItem.title}`
+      } else if (this.editMode && this.modalComponent === 'item-extract') {
+        return `Sell ${this.modalItem.exposition}s from ${this.modalItem.title}`
       }
 
       if (this.modalComponent === 'group') {
         return 'Add Group'
-      } else {
+      } else if (this.modalComponent === 'item') {
         return 'Add Item'
       }
+
+      return ''
     },
   },
   components: {
     group: GroupForm,
     item: ItemForm,
+    'item-add': ItemAddForm,
+    'item-extract': ItemExtractForm,
   },
 }
 </script>
