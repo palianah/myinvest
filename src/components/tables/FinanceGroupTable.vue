@@ -2,7 +2,7 @@
   <div class="dashboard__table">
     <v-card>
       <v-card-title>
-        My Finance Expositions
+        My Investments
         <v-spacer></v-spacer>
         <v-text-field
           v-model="groupSearch"
@@ -20,17 +20,16 @@
         class="elevation-1"
       >
         <template v-slot:item.totalInvested="{ item }">
-          {{ formatPrice(item.totalInvested) }} €
-        </template>
-        <template v-slot:item.currentValue="{ item }">
-          {{ formatPrice(item.currentValue) }} €
+          <TweenNumber :value="item.totalInvested" />
+          €
         </template>
         <template v-slot:item.profit="{ item }">
           <span class="dashboard__table__profit" :class="getColor(item.profit)">
             <v-icon class="dashboard__table__arrow">
               mdi-{{ getIcon(item.profit) }}
             </v-icon>
-            {{ calculateProfit(item) }}
+            <TweenNumber :value="calculateProfit(item)" :formatPrice="false" />
+            %
           </span>
         </template>
         <template v-slot:item.actions="{ item }">
@@ -42,6 +41,12 @@
           >
         </template>
       </v-data-table>
+      <div class="dashboard__table__footer__prepend">
+        <p class="dashboard__table__footer__prepend__text">
+          Total:
+          <b><TweenNumber :value="totalCapitalAsset" /> €</b>
+        </p>
+      </div>
     </v-card>
 
     <FormDialog
@@ -61,9 +66,9 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import utilsFormat from '@/utils/formatting'
 import FormDialog from '@/components/dialog/FormDialog'
 import ConfirmDialog from '@/components/dialog/ConfirmDialog'
+import TweenNumber from '@/components/TweenNumber'
 
 export default {
   data() {
@@ -106,10 +111,7 @@ export default {
       const totalInvested = parseFloat(item.totalInvested)
       const profit = parseFloat(item.profit)
       const calc = parseFloat((profit / totalInvested) * 100).toFixed(2)
-      return `${calc}%`
-    },
-    formatPrice(val) {
-      return utilsFormat.formatPrice(val)
+      return calc
     },
     editGroup(item) {
       this.formOpen = true
@@ -134,13 +136,26 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['groupsWithInvestments']),
+    ...mapGetters(['groupsWithInvestments', 'totalCapitalAsset']),
   },
   components: {
     FormDialog,
     ConfirmDialog,
+    TweenNumber,
   },
 }
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less">
+.dashboard__table {
+  &__footer__prepend {
+    margin-top: -58px;
+    height: 58px;
+
+    &__text {
+      font-size: 15px;
+      padding: 17px;
+    }
+  }
+}
+</style>

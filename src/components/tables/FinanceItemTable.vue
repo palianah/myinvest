@@ -3,27 +3,19 @@
     <v-card>
       <v-card-title>
         {{ title }}
-        <v-spacer></v-spacer>
-        <v-text-field
-          v-model="groupSearch"
-          append-icon="mdi-magnify"
-          label="Search"
-          single-line
-          hide-details
-        ></v-text-field>
       </v-card-title>
       <v-data-table
         :headers="headers"
         :items="getItemsFromGroup"
         :items-per-page="10"
-        :search="groupSearch"
+        hide-default-footer
         class="elevation-1"
       >
         <template v-slot:item.totalInvested="{ item }">
-          {{ formatPrice(item.totalInvested) }} €
+          <TweenNumber :value="item.totalInvested" /> €
         </template>
         <template v-slot:item.currentValue="{ item }">
-          {{ formatPrice(item.currentValue) }} €
+          <TweenNumber :value="item.currentValue" /> €
         </template>
         <template v-slot:item.amount="{ item }">
           <span class="dashboard__table__amount">
@@ -34,7 +26,11 @@
               >mdi-minus</v-icon
             >
             <span class="dashboard__table__amount__text">
-              {{ item.amount }}
+              <TweenNumber
+                :value="item.amount"
+                :toFixed="0"
+                :formatPrice="false"
+              />
             </span>
             <v-icon
               :title="`Buy more ${item.title} ${item.exposition}s`"
@@ -44,12 +40,16 @@
             >
           </span>
         </template>
+        <template v-slot:item.averageStockPrice="{ item }">
+          <TweenNumber :value="item.averageStockPrice" />
+        </template>
         <template v-slot:item.profit="{ item }">
           <span class="dashboard__table__profit" :class="getColor(item.profit)">
             <v-icon class="dashboard__table__arrow">
               mdi-{{ getIcon(item.profit) }}
             </v-icon>
-            {{ calculateProfit(item) }}
+            <TweenNumber :value="calculateProfit(item)" :formatPrice="false" />
+            %
           </span>
         </template>
         <template v-slot:item.actions="{ item }">
@@ -57,6 +57,12 @@
           <v-icon @click.stop="deleteItem(item)" title="Delete"
             >mdi-delete</v-icon
           >
+        </template>
+        <template v-slot:footer>
+          <div class="dashboard__table__footer">
+            Total:
+            <b><TweenNumber :value="totalCapitalAsset" /> € </b>
+          </div>
         </template>
       </v-data-table>
     </v-card>
@@ -79,9 +85,9 @@
 <script>
 import { mapState } from 'vuex'
 import { filter } from 'lodash'
-import utilsFormat from '@/utils/formatting'
 import FormDialog from '@/components/dialog/FormDialog'
 import ConfirmDialog from '@/components/dialog/ConfirmDialog'
+import TweenNumber from '@/components/TweenNumber'
 
 export default {
   props: {
@@ -98,7 +104,6 @@ export default {
       modalComponent: '',
       modalItem: '',
       deleteTitle: '',
-      groupSearch: '',
       headers: [
         { text: 'Name', value: 'title' },
         { text: 'Total invested', value: 'totalInvested' },
@@ -131,10 +136,7 @@ export default {
       const totalInvested = parseFloat(item.totalInvested)
       const profit = parseFloat(item.profit)
       const calc = parseFloat((profit / totalInvested) * 100).toFixed(2)
-      return `${calc}%`
-    },
-    formatPrice(val) {
-      return utilsFormat.formatPrice(val)
+      return calc
     },
     editItem(item) {
       this.formOpen = true
@@ -173,6 +175,13 @@ export default {
     getItemsFromGroup() {
       return filter(this.financeItems, { exposition: this.item })
     },
+    totalCapitalAsset() {
+      let value = 0
+      this.getItemsFromGroup.forEach((item) => {
+        value = parseFloat(item.currentValue)
+      })
+      return value
+    },
   },
   created() {
     if (this.title === 'Stock' || this.title === 'ETF') {
@@ -187,6 +196,7 @@ export default {
   components: {
     FormDialog,
     ConfirmDialog,
+    TweenNumber,
   },
 }
 </script>
@@ -231,6 +241,12 @@ export default {
     &__icon {
       font-size: 16px !important;
     }
+  }
+
+  &__footer {
+    border-top: thin solid rgba(0, 0, 0, 0.12);
+    padding: 15px;
+    font-size: 15px;
   }
 }
 </style>

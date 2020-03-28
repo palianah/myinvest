@@ -193,6 +193,14 @@ export default new Vuex.Store({
         return group
       })
     },
+    totalCapitalAsset: (_, getters) => {
+      if (!getters.groupsWithInvestments) return
+      let value = 0
+      getters.groupsWithInvestments.forEach((invest) => {
+        value += parseFloat(invest.currentValue)
+      })
+      return value
+    },
   },
   modules: {},
 })
