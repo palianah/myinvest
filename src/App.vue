@@ -12,7 +12,15 @@ import DefaultLayout from './layouts/Default'
 export default {
   name: 'App',
   computed: {
-    ...mapState(['layout'])
+    ...mapState(['layout', 'userId'])
+  },
+  watch: {
+    userId(userId) {
+      if (userId) {
+        this.$store.dispatch('getFinanceGroups')
+        this.$store.dispatch('getFinanceItems')
+      }
+    }
   },
   components: {
     landing: LandingLayout,

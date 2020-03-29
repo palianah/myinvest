@@ -58,8 +58,7 @@ export default {
       if (this.validate()) {
         const newData = this.calculateValues()
 
-        // TODO: dispatch statt commit
-        this.$store.commit('UPDATE_FINANCE_ITEM', {
+        this.$store.dispatch('updateFinanceItem', {
           ...this.formProps,
           ...newData,
         })

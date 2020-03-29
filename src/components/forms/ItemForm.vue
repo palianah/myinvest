@@ -106,18 +106,15 @@ export default {
       if (this.validate()) {
         // TODO: dispatch statt commit
         if (!this.editMode) {
-          this.$store.commit('ADD_FINANCE_ITEM', {
+          this.$store.dispatch('addFinanceItem', {
             ...this.formData,
-            key: new Date(), // TODO: firebase key
             profit: 0,
             currentValue: this.formData.totalInvested,
           })
         } else {
-          this.$store.commit('UPDATE_FINANCE_ITEM', {
+          this.$store.dispatch('updateFinanceItem', {
             ...this.formData,
-            key: '', // TODO: get from saved key
-            profit:
-              parseFloat(this.formData.currentValue) -
+            profit: parseFloat(this.formData.currentValue) -
               parseFloat(this.formData.totalInvested),
           })
         }

@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard__table">
+  <div class="dashboard__table" v-if="filteredGroups.length">
     <v-card>
       <v-card-title>
         My Investments
@@ -14,7 +14,7 @@
       </v-card-title>
       <v-data-table
         :headers="headers"
-        :items="groupsWithInvestments"
+        :items="filteredGroups"
         :items-per-page="10"
         :search="groupSearch"
         class="elevation-1"
@@ -58,7 +58,7 @@
     />
     <ConfirmDialog
       :confirmOpen="confirmOpen"
-      :title="deleteTitle"
+      :item="modalItem"
       @dialog-event="confirmEvent"
     />
   </div>
@@ -77,7 +77,6 @@ export default {
       confirmOpen: false,
       modalComponent: '',
       modalItem: '',
-      deleteTitle: '',
       groupSearch: '',
       headers: [
         { text: 'Name', value: 'title' },
@@ -110,6 +109,9 @@ export default {
     calculateProfit(item) {
       const totalInvested = parseFloat(item.totalInvested)
       const profit = parseFloat(item.profit)
+      if (totalInvested === 0 && profit === 0) {
+        return 0.00
+      }
       const calc = parseFloat((profit / totalInvested) * 100).toFixed(2)
       return calc
     },
@@ -119,7 +121,7 @@ export default {
       this.modalItem = item
     },
     deleteGroup(item) {
-      this.deleteTitle = item.title
+      this.modalItem = item
       this.confirmOpen = true
     },
     closeFormDialog() {
@@ -129,14 +131,13 @@ export default {
     },
     confirmEvent(payload) {
       if (payload.mode === 'confirm') {
-        // TODO: use dispatch action after firebase connected
-        this.$store.commit('DELETE_FINANCE_GROUP', payload.title)
+        this.$store.dispatch('deleteFinanceGroup', payload)
       }
       this.confirmOpen = false
     },
   },
   computed: {
-    ...mapGetters(['groupsWithInvestments', 'totalCapitalAsset']),
+    ...mapGetters(['filteredGroups', 'totalCapitalAsset']),
   },
   components: {
     FormDialog,

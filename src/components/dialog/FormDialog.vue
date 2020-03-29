@@ -16,8 +16,8 @@
 <script>
 import GroupForm from '@/components/forms/GroupForm'
 import ItemForm from '@/components/forms/ItemForm'
-import ItemAddForm from '@/components/forms/ItemAddForm'
-import ItemExtractForm from '@/components/forms/ItemExtractForm'
+import ItemBuyForm from '@/components/forms/ItemBuyForm'
+import ItemSellForm from '@/components/forms/ItemSellForm'
 
 export default {
   props: {
@@ -74,8 +74,8 @@ export default {
   components: {
     group: GroupForm,
     item: ItemForm,
-    'item-add': ItemAddForm,
-    'item-extract': ItemExtractForm,
+    'item-add': ItemBuyForm,
+    'item-extract': ItemSellForm,
   },
 }
 </script>

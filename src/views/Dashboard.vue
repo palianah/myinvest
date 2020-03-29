@@ -6,7 +6,6 @@
       <FinanceItemTable :title="group.title" :item="group.title" />
     </div>
 
-    <!-- <FinanceItemTable :title="financeGroups[0].title" item="P2P" /> -->
   </div>
 </template>
 

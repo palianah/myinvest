@@ -7,10 +7,10 @@
     >
       <v-icon>mdi-close</v-icon>
     </v-btn>
-    <h3 class="text-center pb-5">Are you sure to delete {{ title }}?</h3>
+    <h3 class="text-center pb-5">Are you sure to delete {{ item.title }}?</h3>
     <div class="text-center">
       <v-btn
-        @click="$emit('dialog-event', { mode: 'confirm', title })"
+        @click="$emit('dialog-event', { mode: 'confirm', key: item.key })"
         min-width="100"
         small
         class="ma-2"
@@ -23,7 +23,7 @@
         min-width="100"
         small
         color="error"
-        @click="$emit('dialog-event', { mode: 'cancel', title })"
+        @click="$emit('dialog-event', { mode: 'cancel', key: item.key })"
       >
         Cancel
       </v-btn>
@@ -34,8 +34,8 @@
 <script>
 export default {
   props: {
-    title: {
-      type: String,
+    item: {
+      type: [Object, String],
       default: '',
     },
     confirmOpen: {
@@ -54,7 +54,7 @@ export default {
     },
     isOpen(newValue) {
       if (!newValue) {
-        this.$emit('dialog-event', { mode: 'cancel', title: this.title })
+        this.$emit('dialog-event', { mode: 'cancel', key: this.item.key })
       }
     },
   },

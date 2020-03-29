@@ -14,7 +14,7 @@ export default {
       if (valid) {
         this.$store.dispatch('login', { email, password })
       } else {
-        console.log('has error!')
+        console.alert('has error!')
       }
     }
   },

@@ -16,28 +16,31 @@ export default new Vuex.Store({
     },
     AUTH_USER(state, userData) {
       state.idToken = userData.token
+      state.refreshToken = userData.refreshToken
       state.userId = userData.userId
     },
     CLEAR_AUTH_DATA(state) {
       state.idToken = null
+      state.refreshToken = null
       state.userId = null
       localStorage.removeItem('token')
       localStorage.removeItem('userId')
+      localStorage.removeItem('refreshToken')
+      localStorage.removeItem('expirationDate')
     },
     ADD_FINANCE_GROUP(state, groupData) {
       state.financeGroups.push(groupData)
     },
     UPDATE_FINANCE_GROUP(state, groupData) {
-      const index = findIndex(state.financeGroups, { title: groupData.title }) // TODO: change with key!
+      const index = findIndex(state.financeGroups, { key: groupData.key })
       // need to overwrite in a new array because it is not updated if i just change the item itself!
       const newData = [...state.financeGroups]
       newData[index] = groupData
       state.financeGroups = newData
     },
-    DELETE_FINANCE_GROUP(state, title) {
-      // TODO: delete with key and userId match
+    DELETE_FINANCE_GROUP(state, key) {
       state.financeGroups = state.financeGroups.filter(
-        (item) => item.title !== title
+        (item) => item.key !== key
       )
     },
     ADD_FINANCE_ITEM(state, itemData) {
@@ -45,20 +48,22 @@ export default new Vuex.Store({
       state.financeItems.push(itemData)
     },
     UPDATE_FINANCE_ITEM(state, itemData) {
-      const index = findIndex(state.financeItems, { title: itemData.title }) // TODO: change with key!
+      const index = findIndex(state.financeItems, { key: itemData.key })
       // need to overwrite in a new array because it is not updated if i just change the item itself!
       const newData = [...state.financeItems]
       newData[index] = itemData
       state.financeItems = newData
     },
-    DELETE_FINANCE_ITEM(state, title) {
-      // TODO: delete with key and userId match
-      state.financeItems = state.financeItems.filter(
-        (item) => item.title !== title
-      )
+    DELETE_FINANCE_ITEM(state, key) {
+      state.financeItems = state.financeItems.filter((item) => item.key !== key)
     },
   },
   actions: {
+    setLogoutTimer({ commit }, expirationTime) {
+      setTimeout(() => {
+        commit('CLEAR_AUTH_DATA')
+      }, expirationTime) // * 1000
+    },
     signup({ commit }, authData) {
       AuthService.register({
         email: authData.email,
@@ -66,11 +71,18 @@ export default new Vuex.Store({
       })
         .then((res) => {
           commit('AUTH_USER', {
-            token: res.data.refreshToken, // idToken
+            refreshToken: res.data.refreshToken,
+            token: res.data.idToken,
             userId: res.data.localId,
           })
           commit('SET_LAYOUT', 'default')
-          localStorage.setItem('token', res.data.refreshToken)
+          const now = new Date()
+          const expirationDate = new Date(
+            now.getTime() + res.data.expiresIn * 1000
+          )
+          localStorage.setItem('expirationDate', expirationDate.getTime())
+          localStorage.setItem('token', res.data.idToken)
+          localStorage.setItem('refreshToken', res.data.refreshToken)
           localStorage.setItem('userId', res.data.localId)
           router.push({ name: 'dashboard' })
         })
@@ -83,23 +95,39 @@ export default new Vuex.Store({
       })
         .then((res) => {
           commit('AUTH_USER', {
-            token: res.data.refreshToken, // idToken
+            refreshToken: res.data.refreshToken,
+            token: res.data.idToken,
             userId: res.data.localId,
           })
           commit('SET_LAYOUT', 'default')
-          localStorage.setItem('token', res.data.refreshToken)
+          const now = new Date()
+          const expirationDate = new Date(
+            now.getTime() + res.data.expiresIn * 1000
+          )
+          localStorage.setItem('expirationDate', expirationDate.getTime())
+          localStorage.setItem('refreshToken', res.data.refreshToken)
+          localStorage.setItem('token', res.data.idToken)
           localStorage.setItem('userId', res.data.localId)
           router.push({ name: 'dashboard' })
         })
         .catch((e) => console.error(e))
     },
-    tryAutoLogin({ commit }) {
+    tryAutoLogin({ dispatch, commit }) {
+      const refreshToken = localStorage.getItem('refreshToken')
       const token = localStorage.getItem('token')
       const userId = localStorage.getItem('userId')
+
       if (!token || !userId) {
         return
       }
-      commit('AUTH_USER', { token, userId })
+
+      const expirationDate = parseInt(localStorage.getItem('expirationDate'))
+      const now = new Date().getTime()
+      if (now >= expirationDate) {
+        dispatch('refreshIdToken', refreshToken)
+      }
+
+      commit('AUTH_USER', { refreshToken, userId, token })
       commit('SET_LAYOUT', 'default')
     },
     logout({ commit }) {
@@ -107,35 +135,107 @@ export default new Vuex.Store({
       commit('SET_LAYOUT', 'landing')
       router.replace({ name: 'home' })
     },
-    // e.g P2P, Aktien, ETF
+    refreshIdToken({ state, commit }, refreshToken) {
+      AuthService.refreshIdToken(refreshToken)
+        .then((res) => {
+          commit('AUTH_USER', {
+            refreshToken: state.refreshToken,
+            userId: state.userId,
+            token: res.data.id_token,
+          })
+
+          const now = new Date()
+          const expirationDate = new Date(now.getTime() + 3600 * 1000)
+          localStorage.setItem('expirationDate', expirationDate.getTime())
+          localStorage.setItem('token', res.data.id_token)
+        })
+        .catch((e) => console.error(e))
+    },
     addFinanceGroup({ state, commit }, formData) {
-      // TODO: use ...formData and add only uid
       DataService.addGroup({
-        uid: state.userId,
-        title: formData.title,
-        description: formData.description,
+        ...formData,
+        userId: state.userId,
       })
         .then((res) => {
-          commit('ADD_FINANCE_GROUP', { ...res.data }) // , key: res.data.key
+          commit('ADD_FINANCE_GROUP', {
+            ...formData,
+            userId: state.userId,
+            key: res.data.name,
+          })
         })
         .catch((e) => console.error(e))
     },
-    // e.g AMD, Mintos, Bondora, Apple, MSCI World ETF
+    updateFinanceGroup({ state, commit }, formData) {
+      DataService.updateGroup({
+        ...formData,
+        userId: state.userId,
+      })
+        .then(() => {
+          commit('UPDATE_FINANCE_GROUP', {
+            ...formData,
+            userId: state.userId,
+          })
+        })
+        .catch((e) => console.error(e))
+    },
+    getFinanceGroups({ commit }) {
+      DataService.getGroups()
+        .then((res) => {
+          Object.entries(res.data).forEach((group) => {
+            commit('ADD_FINANCE_GROUP', { ...group[1], key: group[0] })
+          })
+        })
+        .catch((e) => console.error(e))
+    },
+    deleteFinanceGroup({ state, dispatch, commit }, item) {
+      DataService.deleteGroup(item.key)
+        .then(() => {
+          commit('DELETE_FINANCE_GROUP', item.key)
+          // delete all items from this group
+          state.financeItems.forEach((item) => {
+            if (item.exposition === item.title) {
+              dispatch('deleteFinanceItem', item.key)
+            }
+          })
+        })
+        .catch((e) => console.error(e))
+    },
     addFinanceItem({ state, commit }, formData) {
-      // TODO: use ...formData and add only uid
       DataService.addItem({
-        uid: state.userId,
-        exposition: formData.exposition,
-        title: formData.title,
-        description: formData.description,
-        stockID: formData.stockID, // e.g to connect to investing.com apple id?
+        ...formData,
+        userId: state.userId,
       })
         .then((res) => {
-          commit('ADD_FINANCE_ITEM', { ...res.data }) // , key: res.data.key
+          commit('ADD_FINANCE_ITEM', {
+            ...formData,
+            userId: state.userId,
+            key: res.data.name,
+          })
         })
         .catch((e) => console.error(e))
     },
-    // Buy Stock, amount, price
+    updateFinanceItem({ state, commit }, formData) {
+      DataService.updateItem({
+        ...formData,
+        userId: state.userId,
+      })
+        .then(() => {
+          commit('UPDATE_FINANCE_ITEM', {
+            ...formData,
+            userId: state.userId,
+          })
+        })
+        .catch((e) => console.error(e))
+    },
+    getFinanceItems({ commit }) {
+      DataService.getItems()
+        .then((res) => {
+          Object.entries(res.data).forEach((item) => {
+            commit('ADD_FINANCE_ITEM', { ...item[1], key: item[0] })
+          })
+        })
+        .catch((e) => console.error(e))
+    },
     buyFinanceItem({ state, commit }, formData) {
       DataService.buyItem({
         uid: state.userId,
@@ -148,20 +248,13 @@ export default new Vuex.Store({
         })
         .catch((e) => console.error(e))
     },
-    // deleteFinanceItem({ state, commit }, formData) {
-    //   DataService.updateItem({
-    //     uid: state.userId,
-    //     item: formData.item,
-    //     amount: formData.amount,
-    //     purchasePrice: formData.purchasePrice,
-    //     fee: formData.fee,
-    //     totalPrice: formData.totalPrice // single stock price * amount - fee
-    //   })
-    //     .then(res => {
-    //       commit('UPDATE_FINANCE_ITEM', { ...res.data })
-    //     })
-    //     .catch(e => console.error(e))
-    // }
+    deleteFinanceItem({ commit }, key) {
+      DataService.deleteItem(key)
+        .then(() => {
+          commit('DELETE_FINANCE_ITEM', key)
+        })
+        .catch((e) => console.error(e))
+    },
   },
   getters: {
     groupNames: (state) => {
@@ -173,10 +266,10 @@ export default new Vuex.Store({
       return groupNames
     },
     // adds to the finance groups the totalInvested and current value and profit properties
-    groupsWithInvestments: (state) => {
-      if (!state.financeGroups.length || !state.financeItems.length) return
+    filteredGroups: (state) => {
+      if (!state.financeGroups.length) return []
 
-      return state.financeGroups.map((group) => {
+      return state.financeGroups.filter((group) => {
         const expos = filter(state.financeItems, { exposition: group.title })
         let totalInvested = 0
         let currentValue = 0
@@ -189,14 +282,13 @@ export default new Vuex.Store({
         group.totalInvested = totalInvested
         group.currentValue = currentValue
         group.profit = currentValue - totalInvested
-
         return group
       })
     },
     totalCapitalAsset: (_, getters) => {
-      if (!getters.groupsWithInvestments) return
+      if (!getters.filteredGroups) return 0
       let value = 0
-      getters.groupsWithInvestments.forEach((invest) => {
+      getters.filteredGroups.forEach((invest) => {
         value += parseFloat(invest.currentValue)
       })
       return value

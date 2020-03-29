@@ -4,8 +4,16 @@ const auth = axios.create({
   baseURL: process.env.VUE_APP_FIREBASE_AUTH,
   headers: {
     Accept: 'application/json',
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+  },
+})
+
+const refreshAuth = axios.create({
+  baseURL: `https://securetoken.googleapis.com/v1`,
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  },
 })
 
 export default {
@@ -14,7 +22,7 @@ export default {
       `/accounts:signUp?key=${process.env.VUE_APP_FIREBASE_TOKEN}`,
       {
         ...form,
-        returnSecureToken: true
+        returnSecureToken: true,
       }
     )
   },
@@ -23,8 +31,17 @@ export default {
       `/accounts:signInWithPassword?key=${process.env.VUE_APP_FIREBASE_TOKEN}`,
       {
         ...form,
-        returnSecureToken: true
+        returnSecureToken: true,
       }
     )
-  }
+  },
+  refreshIdToken(refreshToken) {
+    return refreshAuth.post(
+      `/token?key=${process.env.VUE_APP_FIREBASE_TOKEN}`,
+      {
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+      }
+    )
+  },
 }

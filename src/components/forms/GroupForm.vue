@@ -58,17 +58,10 @@ export default {
   methods: {
     saveGroup() {
       if (this.validate()) {
-        // TODO: dispatch statt commit
         if (!this.editMode) {
-          this.$store.commit('ADD_FINANCE_GROUP', {
-            ...this.formData,
-            key: new Date(),
-          })
+          this.$store.dispatch('addFinanceGroup', this.formData)
         } else {
-          this.$store.commit('UPDATE_FINANCE_GROUP', {
-            ...this.formData,
-            key: new Date(),
-          })
+          this.$store.dispatch('updateFinanceGroup', this.formData)
         }
         this.$emit('close')
       }

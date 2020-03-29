@@ -76,7 +76,7 @@
     />
     <ConfirmDialog
       :confirmOpen="confirmOpen"
-      :title="deleteTitle"
+      :item="modalItem"
       @dialog-event="confirmEvent"
     />
   </div>
@@ -103,7 +103,6 @@ export default {
       confirmOpen: false,
       modalComponent: '',
       modalItem: '',
-      deleteTitle: '',
       headers: [
         { text: 'Name', value: 'title' },
         { text: 'Total invested', value: 'totalInvested' },
@@ -144,7 +143,7 @@ export default {
       this.modalItem = item
     },
     deleteItem(item) {
-      this.deleteTitle = item.title
+      this.modalItem = item
       this.confirmOpen = true
     },
     buyItem(item) {
@@ -164,10 +163,10 @@ export default {
     },
     confirmEvent(payload) {
       if (payload.mode === 'confirm') {
-        // TODO: use dispatch action after firebase connected
-        this.$store.commit('DELETE_FINANCE_ITEM', payload.title)
+        this.$store.dispatch('deleteFinanceItem', payload.key)
       }
       this.confirmOpen = false
+      this.modalItem = ''
     },
   },
   computed: {
@@ -183,7 +182,7 @@ export default {
       return value
     },
   },
-  created() {
+  created() {    
     if (this.title === 'Stock' || this.title === 'ETF') {
       this.headers.splice(
         2,
