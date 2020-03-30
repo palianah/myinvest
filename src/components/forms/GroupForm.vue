@@ -57,6 +57,7 @@ export default {
   },
   methods: {
     saveGroup() {
+      // TODO: check if groupData.title exists already, not valid!
       if (this.validate()) {
         if (!this.editMode) {
           this.$store.dispatch('addFinanceGroup', this.formData)

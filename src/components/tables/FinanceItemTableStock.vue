@@ -17,6 +17,42 @@
         <template v-slot:item.currentValue="{ item }">
           <TweenNumber :value="item.currentValue" /> €
         </template>
+        <template v-slot:item.realStockPrice="{ item }">
+          <span v-if="stockData && stockData[item.stockID]">
+            {{ stockData[item.stockID].real_price }}
+            <span
+              :class="stockDataColor(stockData[item.stockID].percent_change)"
+            >
+              ({{ stockDataPercent(stockData[item.stockID].percent_change) }} %)
+            </span>
+          </span>
+        </template>
+        <template v-slot:item.amount="{ item }">
+          <span class="dashboard__table__amount">
+            <v-icon
+              :title="`Sell ${item.title} ${item.exposition}s`"
+              @click.stop="sellItem(item)"
+              class="dashboard__table__amount__icon"
+              >mdi-minus</v-icon
+            >
+            <span class="dashboard__table__amount__text">
+              <TweenNumber
+                :value="item.amount"
+                :toFixed="0"
+                :formatPrice="false"
+              />
+            </span>
+            <v-icon
+              :title="`Buy more ${item.title} ${item.exposition}s`"
+              @click.stop="buyItem(item)"
+              class="dashboard__table__amount__icon"
+              >mdi-plus</v-icon
+            >
+          </span>
+        </template>
+        <template v-slot:item.averageStockPrice="{ item }">
+          <TweenNumber :value="item.averageStockPrice" />
+        </template>
         <template v-slot:item.profit="{ item }">
           <span class="dashboard__table__profit" :class="getColor(item.profit)">
             <v-icon class="dashboard__table__arrow">
@@ -74,7 +110,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { filter } from 'lodash'
+import { find, filter } from 'lodash'
 import FormDialog from '@/components/dialog/FormDialog'
 import ConfirmDialog from '@/components/dialog/ConfirmDialog'
 import TweenNumber from '@/components/TweenNumber'
@@ -88,11 +124,15 @@ export default {
       formOpen: false,
       confirmOpen: false,
       modalComponent: '',
+      stockData: {},
       modalItem: '',
       headers: [
         { text: 'Name', value: 'title' },
         { text: 'Invested', value: 'totalInvested' },
         { text: 'Current Value', value: 'currentValue' },
+        { text: 'Amount', value: 'amount' },
+        { text: 'average price', value: 'averageStockPrice' },
+        { text: 'real-time price', value: 'realStockPrice' },
         { text: 'Profit', value: 'profit' },
         {
           text: 'Actions',
@@ -103,6 +143,23 @@ export default {
         },
       ],
     }
+  },
+  watch: {
+    getItemsFromGroup: {
+      immediate: true,
+      handler(items, oldItems) {
+        if (items.length && (!oldItems || !oldItems.length)) {
+          items.forEach((item) => {
+            this.$store.dispatch('realStockPrice', item).then((res) => {
+              // reactivity for deep objects:
+              // https://vuejs.org/v2/guide/reactivity.html#For-Objects
+              this.$set(this.stockData, item.stockID, res)
+              this.updateItem(res, item)
+            })
+          })
+        }
+      },
+    },
   },
   methods: {
     getColor(profit) {
@@ -132,6 +189,16 @@ export default {
       this.modalItem = item
       this.confirmOpen = true
     },
+    buyItem(item) {
+      this.formOpen = true
+      this.modalComponent = 'item-add'
+      this.modalItem = item
+    },
+    sellItem(item) {
+      this.formOpen = true
+      this.modalComponent = 'item-extract'
+      this.modalItem = item
+    },
     closeFormDialog() {
       this.formOpen = false
       this.modalComponent = ''
@@ -143,6 +210,32 @@ export default {
       }
       this.confirmOpen = false
       this.modalItem = ''
+    },
+    stockDataPercent(percent) {
+      let res = parseFloat(parseFloat(percent).toFixed(2))
+      if (res > 0) {
+        res = '+' + res
+      }
+      return res
+    },
+    stockDataColor(percent) {
+      const res = parseFloat(percent)
+      if (res < 0) {
+        return 'c-red'
+      } else if (res > 0) {
+        return 'c-green'
+      }
+      return 'c-orange'
+    },
+    updateItem(res, item) {
+      const curItem = find(this.financeItems, { stockID: item.stockID })
+      const curPrice = curItem.amount * res.real_price
+      const curProfit = curPrice - curItem.totalInvested
+      this.$store.dispatch('updateFinanceItem', {
+        ...item,
+        currentValue: curPrice,
+        profit: curProfit,
+      })
     },
   },
   computed: {
@@ -181,56 +274,3 @@ export default {
   },
 }
 </script>
-
-<style lang="less">
-.dashboard__table {
-  .c-red {
-    color: red;
-  }
-  .c-green {
-    color: green;
-  }
-  .c-orange {
-    color: orange;
-  }
-
-  &__profit {
-    background: transparent;
-  }
-
-  .v-icon {
-    font-size: 18px;
-  }
-
-  &__arrow {
-    font-size: 16px;
-
-    &.mdi-arrow-down-bold {
-      color: red;
-    }
-    &.mdi-arrow-up-bold {
-      color: green;
-    }
-    &.mdi-swap-horizontal {
-      color: orange;
-    }
-  }
-
-  &__amount {
-    width: 200px;
-
-    &__icon {
-      font-size: 16px !important;
-    }
-  }
-
-  &__footer {
-    border-top: thin solid rgba(0, 0, 0, 0.12);
-    padding: 15px;
-    font-size: 15px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-}
-</style>

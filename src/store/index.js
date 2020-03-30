@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import { filter, findIndex } from 'lodash'
 import AuthService from '@/services/auth.service'
 import DataService from '@/services/data.service'
+import FinanceService from '@/services/finance.service'
 import router from '@/router'
 import initialState from '@/store/initialState'
 
@@ -29,7 +30,18 @@ export default new Vuex.Store({
       localStorage.removeItem('expirationDate')
     },
     ADD_FINANCE_GROUP(state, groupData) {
-      state.financeGroups.push(groupData)
+      if (groupData.multiple) {
+        Object.entries(groupData).forEach((group) => {
+          if (group[0] !== 'multiple') {
+            state.financeGroups.push({
+              ...group[1],
+              key: group[0],
+            })
+          }
+        })
+      } else {
+        state.financeGroups.push(groupData)
+      }
     },
     UPDATE_FINANCE_GROUP(state, groupData) {
       const index = findIndex(state.financeGroups, { key: groupData.key })
@@ -45,7 +57,18 @@ export default new Vuex.Store({
     },
     ADD_FINANCE_ITEM(state, itemData) {
       // TODO: check if itemData.title exists already, if yes, merge values!
-      state.financeItems.push(itemData)
+      if (itemData.multiple) {
+        Object.entries(itemData).forEach((item) => {
+          if (item[0] !== 'multiple') {
+            state.financeItems.push({
+              ...item[1],
+              key: item[0],
+            })
+          }
+        })
+      } else {
+        state.financeItems.push(itemData)
+      }
     },
     UPDATE_FINANCE_ITEM(state, itemData) {
       const index = findIndex(state.financeItems, { key: itemData.key })
@@ -56,6 +79,9 @@ export default new Vuex.Store({
     },
     DELETE_FINANCE_ITEM(state, key) {
       state.financeItems = state.financeItems.filter((item) => item.key !== key)
+    },
+    UPDATE_FOREX(state, value) {
+      state.forex = value
     },
   },
   actions: {
@@ -181,9 +207,7 @@ export default new Vuex.Store({
     getFinanceGroups({ commit }) {
       DataService.getGroups()
         .then((res) => {
-          Object.entries(res.data).forEach((group) => {
-            commit('ADD_FINANCE_GROUP', { ...group[1], key: group[0] })
-          })
+          commit('ADD_FINANCE_GROUP', { ...res.data, multiple: true })
         })
         .catch((e) => console.error(e))
     },
@@ -230,18 +254,14 @@ export default new Vuex.Store({
     getFinanceItems({ commit }) {
       DataService.getItems()
         .then((res) => {
-          Object.entries(res.data).forEach((item) => {
-            commit('ADD_FINANCE_ITEM', { ...item[1], key: item[0] })
-          })
+          commit('ADD_FINANCE_ITEM', { ...res.data, multiple: true })
         })
         .catch((e) => console.error(e))
     },
     buyFinanceItem({ state, commit }, formData) {
       DataService.buyItem({
+        ...formData,
         uid: state.userId,
-        amount: formData.amount,
-        averageStockPrice: formData.stockPrice,
-        totalPrice: formData.totalPrice, // single stock price * amount
       })
         .then((res) => {
           commit('UPDATE_FINANCE_ITEM', { ...res.data })
@@ -252,6 +272,33 @@ export default new Vuex.Store({
       DataService.deleteItem(key)
         .then(() => {
           commit('DELETE_FINANCE_ITEM', key)
+        })
+        .catch((e) => console.error(e))
+    },
+    convertExchange({ commit }, symbol) {
+      FinanceService.forex(symbol).then((res) => {
+        commit('UPDATE_FOREX', {
+          key: symbol,
+          value: res.data.price,
+        })
+      })
+    },
+    realStockPrice({ state }, item) {
+      if (!state.forex) return ''
+
+      return FinanceService.quote(item.stockID)
+        .then((res) => {
+          const price = res.data.close
+          const dif = parseFloat(state.forex.value)
+          let result = parseFloat(price).toFixed(2)
+          if (item.market === 'US') {
+            // TODO: check language and global currency in future!
+            result = parseFloat(price / dif).toFixed(2)
+          }
+          return {
+            ...res.data,
+            real_price: result,
+          }
         })
         .catch((e) => console.error(e))
     },

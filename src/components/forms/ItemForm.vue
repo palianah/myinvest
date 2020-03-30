@@ -16,11 +16,14 @@
     ></v-text-field>
 
     <template v-if="showStockFormData">
-      <v-text-field
-        type="number"
-        v-model="formData.stockID"
-        label="stockID"
-      ></v-text-field>
+      <v-select
+        v-model="formData.market"
+        :items="markets"
+        :rules="emptyRule"
+        label="Trading Market"
+        required
+      ></v-select>
+      <v-text-field v-model="formData.stockID" label="quotes"></v-text-field>
       <v-text-field
         type="number"
         v-model="formData.amount"
@@ -75,6 +78,7 @@ export default {
     return {
       valid: true,
       showStockFormData: false,
+      markets: ['US', 'DE', 'KOR'],
       emptyRule: [(v) => !!v || 'This field is required'],
       formData: this.formProps
         ? { ...this.formProps }
@@ -83,6 +87,7 @@ export default {
             title: '',
             stockID: '',
             amount: '',
+            market: '',
             averageStockPrice: '',
             totalInvested: '',
           },
@@ -104,7 +109,6 @@ export default {
   methods: {
     saveItem() {
       if (this.validate()) {
-        // TODO: dispatch statt commit
         if (!this.editMode) {
           this.$store.dispatch('addFinanceItem', {
             ...this.formData,
@@ -114,7 +118,8 @@ export default {
         } else {
           this.$store.dispatch('updateFinanceItem', {
             ...this.formData,
-            profit: parseFloat(this.formData.currentValue) -
+            profit:
+              parseFloat(this.formData.currentValue) -
               parseFloat(this.formData.totalInvested),
           })
         }

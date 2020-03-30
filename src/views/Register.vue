@@ -14,13 +14,13 @@ export default {
       if (valid) {
         this.$store.dispatch('signup', { email, password })
       } else {
-        console.log('has error!')
+        console.error('has error!')
       }
-    }
+    },
   },
   components: {
-    AuthForm
-  }
+    AuthForm,
+  },
 }
 </script>
 
