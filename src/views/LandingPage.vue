@@ -1,6 +1,8 @@
 <template>
   <div class="landing">
-    <h1>My Investment Landingpage comes here</h1>
+    <h1>
+      {{ $vuetify.lang.t('$vuetify.landingPage.headline') }}
+    </h1>
   </div>
 </template>
 
@@ -9,6 +11,6 @@
 
 export default {
   name: 'Landing',
-  components: {}
+  components: {},
 }
 </script>

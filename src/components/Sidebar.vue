@@ -1,6 +1,8 @@
 <template>
   <v-navigation-drawer class="sidebar" permanent color="primary" fixed dark>
-    <h2 class="px-5 pt-5 sidebar__headline">My Investment</h2>
+    <h2 class="px-5 pt-5 sidebar__headline">
+      {{ $vuetify.lang.t('$vuetify.sidebar.headline') }}
+    </h2>
 
     <v-list dense nav class="py-0 pt-10">
       <v-list-item
@@ -26,8 +28,8 @@
     />
 
     <v-btn class="sidebar__logout" small text @click="logout">
-      <span>Logout</span>
-      <v-icon>mdi-login</v-icon>
+      <v-icon>mdi-logout</v-icon>
+      <span>{{ $vuetify.lang.t('$vuetify.sidebar.logout') }}</span>
     </v-btn>
   </v-navigation-drawer>
 </template>
@@ -43,13 +45,29 @@ export default {
       items: [
         {
           id: 'table',
-          title: 'List-View',
+          title: this.$vuetify.lang.t('$vuetify.sidebar.listView'),
           icon: 'mdi-format-list-bulleted',
         },
-        { id: 'chart', title: 'Chart-View', icon: 'mdi-finance' },
-        { id: 'examples', title: 'Examples', icon: 'mdi-tablet' },
-        { id: 'group', title: 'Add Finance Group', icon: 'mdi-pencil-plus' },
-        { id: 'item', title: 'Add Finance Item ', icon: 'mdi-pencil-plus' },
+        {
+          id: 'chart',
+          title: this.$vuetify.lang.t('$vuetify.sidebar.chartView'),
+          icon: 'mdi-finance',
+        },
+        {
+          id: 'examples',
+          title: this.$vuetify.lang.t('$vuetify.sidebar.examples'),
+          icon: 'mdi-tablet',
+        },
+        {
+          id: 'group',
+          title: this.$vuetify.lang.t('$vuetify.sidebar.addGroup'),
+          icon: 'mdi-pencil-plus',
+        },
+        {
+          id: 'item',
+          title: this.$vuetify.lang.t('$vuetify.sidebar.addItem'),
+          icon: 'mdi-pencil-plus',
+        },
       ],
     }
   },

@@ -1,6 +1,8 @@
 <template>
   <div class="register">
-    <h2 class="text-center">Register to My Invest</h2>
+    <h2 class="text-center">
+      {{ $vuetify.lang.t('$vuetify.auth.register.headline') }}
+    </h2>
     <AuthForm @submit="onSubmit" />
   </div>
 </template>

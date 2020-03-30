@@ -12,7 +12,7 @@ import DefaultLayout from './layouts/Default'
 export default {
   name: 'App',
   computed: {
-    ...mapState(['layout', 'userId'])
+    ...mapState(['layout', 'userId']),
   },
   watch: {
     userId(userId) {
@@ -20,14 +20,15 @@ export default {
         this.$store.dispatch('getFinanceGroups')
         this.$store.dispatch('getFinanceItems')
       }
-    }
+    },
   },
   components: {
     landing: LandingLayout,
-    default: DefaultLayout
+    default: DefaultLayout,
   },
   created() {
+    this.$vuetify.lang.current = this.$route.params.lang
     this.$store.dispatch('tryAutoLogin')
-  }
+  },
 }
 </script>

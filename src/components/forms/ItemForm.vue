@@ -4,13 +4,13 @@
       v-model="formData.exposition"
       :items="groupNames"
       :rules="emptyRule"
-      label="Finance Group"
+      :label="$vuetify.lang.t('$vuetify.forms.financeGroup')"
       required
     ></v-select>
 
     <v-text-field
       v-model="formData.title"
-      label="Title"
+      :label="$vuetify.lang.t('$vuetify.forms.title')"
       :rules="emptyRule"
       required
     ></v-text-field>
@@ -20,42 +20,45 @@
         v-model="formData.market"
         :items="markets"
         :rules="emptyRule"
-        label="Trading Market"
+        :label="$vuetify.lang.t('$vuetify.forms.tradingMarket')"
         required
       ></v-select>
-      <v-text-field v-model="formData.stockID" label="quotes"></v-text-field>
+      <v-text-field
+        v-model="formData.stockID"
+        :label="$vuetify.lang.t('$vuetify.forms.quotes')"
+      ></v-text-field>
       <v-text-field
         type="number"
         v-model="formData.amount"
-        label="Amount"
+        :label="$vuetify.lang.t('$vuetify.forms.amount')"
       ></v-text-field>
       <v-text-field
         type="number"
         v-model="formData.averageStockPrice"
-        label="Average stock price"
+        :label="$vuetify.lang.t('$vuetify.forms.averageStockPrice')"
       ></v-text-field>
     </template>
 
     <v-text-field
       type="number"
       v-model="formData.totalInvested"
-      label="Total Invested Value"
+      :label="$vuetify.lang.t('$vuetify.forms.totalInvestedValue')"
     ></v-text-field>
 
     <template v-if="editMode">
       <v-text-field
         type="number"
         v-model="formData.currentValue"
-        label="Current Value"
+        :label="$vuetify.lang.t('$vuetify.forms.currentValue')"
       ></v-text-field>
     </template>
 
     <div class="text-center">
       <v-btn type="submit" min-width="150" class="ma-2" color="primary">
-        Save
+        {{ $vuetify.lang.t('$vuetify.forms.saveBtn') }}
       </v-btn>
       <v-btn class="ma-2" min-width="150" color="error" @click="$emit('close')">
-        Cancel
+        {{ $vuetify.lang.t('$vuetify.forms.cancelBtn') }}
       </v-btn>
     </div>
   </v-form>
@@ -79,7 +82,9 @@ export default {
       valid: true,
       showStockFormData: false,
       markets: ['US', 'DE', 'KOR'],
-      emptyRule: [(v) => !!v || 'This field is required'],
+      emptyRule: [
+        (v) => !!v || this.$vuetify.lang.t('$vuetify.forms.fieldRequired'),
+      ],
       formData: this.formProps
         ? { ...this.formProps }
         : {

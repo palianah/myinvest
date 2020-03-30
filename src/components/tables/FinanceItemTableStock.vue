@@ -71,7 +71,7 @@
         <template v-slot:footer>
           <div class="dashboard__table__footer">
             <div class="dashboard__table__footer__item">
-              Total:
+              {{ $vuetify.lang.t('$vuetify.table.footer.total') }}:
               <b><TweenNumber :value="totalCapitalAsset" /> € </b>
             </div>
             <div class="dashboard__table__footer__item">
@@ -127,15 +127,36 @@ export default {
       stockData: {},
       modalItem: '',
       headers: [
-        { text: 'Name', value: 'title' },
-        { text: 'Invested', value: 'totalInvested' },
-        { text: 'Current Value', value: 'currentValue' },
-        { text: 'Amount', value: 'amount' },
-        { text: 'average price', value: 'averageStockPrice' },
-        { text: 'real-time price', value: 'realStockPrice' },
-        { text: 'Profit', value: 'profit' },
         {
-          text: 'Actions',
+          text: this.$vuetify.lang.t('$vuetify.table.headlines.name'),
+          value: 'title',
+        },
+        {
+          text: this.$vuetify.lang.t('$vuetify.table.headlines.totalInvested'),
+          value: 'totalInvested',
+        },
+        {
+          text: this.$vuetify.lang.t('$vuetify.table.headlines.currentValue'),
+          value: 'currentValue',
+        },
+        {
+          text: this.$vuetify.lang.t('$vuetify.table.headlines.amount'),
+          value: 'amount',
+        },
+        {
+          text: this.$vuetify.lang.t('$vuetify.table.headlines.averagePrice'),
+          value: 'averageStockPrice',
+        },
+        {
+          text: this.$vuetify.lang.t('$vuetify.table.headlines.realtimePrice'),
+          value: 'realStockPrice',
+        },
+        {
+          text: this.$vuetify.lang.t('$vuetify.table.headlines.profit'),
+          value: 'profit',
+        },
+        {
+          text: this.$vuetify.lang.t('$vuetify.table.headlines.actions'),
           value: 'actions',
           width: '100',
           align: 'right',

@@ -10,7 +10,7 @@
       class="item-add-form__input"
       type="number"
       v-model="formData.amount"
-      label="Amount"
+      :label="$vuetify.lang.t('$vuetify.forms.amount')"
       :rules="emptyRule"
       required
     ></v-text-field>
@@ -18,17 +18,17 @@
       class="item-add-form__input"
       type="number"
       v-model="formData.averageStockPrice"
-      label="Bought single stock price"
+      :label="$vuetify.lang.t('$vuetify.forms.boughtSingleStockPrice')"
       :rules="emptyRule"
       required
     ></v-text-field>
 
     <div class="text-center">
       <v-btn type="submit" min-width="150" class="ma-2" color="primary">
-        Buy
+        {{ $vuetify.lang.t('$vuetify.forms.buyBtn') }}
       </v-btn>
       <v-btn class="ma-2" min-width="150" color="error" @click="$emit('close')">
-        Cancel
+        {{ $vuetify.lang.t('$vuetify.forms.cancelBtn') }}
       </v-btn>
     </div>
   </v-form>
@@ -46,7 +46,9 @@ export default {
   data() {
     return {
       valid: true,
-      emptyRule: [(v) => !!v || 'This field is required'],
+      emptyRule: [
+        (v) => !!v || this.$vuetify.lang.t('$vuetify.forms.fieldRequired'),
+      ],
       formData: {
         amount: '',
         averageStockPrice: '',
@@ -77,8 +79,8 @@ export default {
       const propsCurrent = parseFloat(this.formProps.currentValue)
       const propsAmount = parseFloat(this.formProps.amount)
 
-      const totalInvested = (formAmount * formStockPrice) + propsTotalInvested
-      const currentValue = (formAmount * formStockPrice) + propsCurrent
+      const totalInvested = formAmount * formStockPrice + propsTotalInvested
+      const currentValue = formAmount * formStockPrice + propsCurrent
       const profit = currentValue - totalInvested
       const amount = formAmount + propsAmount
       const averageStockPrice = parseFloat(totalInvested / amount).toFixed(2)
@@ -88,7 +90,7 @@ export default {
         currentValue,
         profit,
         amount,
-        averageStockPrice
+        averageStockPrice,
       }
     },
     validate() {

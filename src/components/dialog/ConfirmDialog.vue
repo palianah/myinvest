@@ -7,7 +7,9 @@
     >
       <v-icon>mdi-close</v-icon>
     </v-btn>
-    <h3 class="text-center pb-5">Are you sure to delete {{ item.title }}?</h3>
+    <h3 class="text-center pb-5">
+      {{ $vuetify.lang.t('$vuetify.forms.deleteMessage') }} {{ item.title }}?
+    </h3>
     <div class="text-center">
       <v-btn
         @click="$emit('dialog-event', { mode: 'confirm', key: item.key })"
@@ -16,7 +18,7 @@
         class="ma-2"
         color="primary"
       >
-        Yes
+        {{ $vuetify.lang.t('$vuetify.forms.confirmBtn') }}
       </v-btn>
       <v-btn
         class="ma-2"
@@ -25,7 +27,7 @@
         color="error"
         @click="$emit('dialog-event', { mode: 'cancel', key: item.key })"
       >
-        Cancel
+        {{ $vuetify.lang.t('$vuetify.forms.cancelBtn') }}
       </v-btn>
     </div>
   </v-dialog>

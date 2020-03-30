@@ -7,24 +7,24 @@
   >
     <v-text-field
       v-model="formData.title"
-      label="Title"
+      :label="$vuetify.lang.t('$vuetify.forms.title')"
       :rules="titleRules"
       required
     ></v-text-field>
 
     <v-text-field
       v-model="formData.description"
-      label="Description"
+      :label="$vuetify.lang.t('$vuetify.forms.description')"
       :rules="descriptionRules"
       required
     ></v-text-field>
 
     <div class="text-center">
       <v-btn type="submit" min-width="150" class="ma-2" color="primary">
-        Save
+        {{ $vuetify.lang.t('$vuetify.forms.saveBtn') }}
       </v-btn>
       <v-btn class="ma-2" min-width="150" color="error" @click="$emit('close')">
-        Cancel
+        {{ $vuetify.lang.t('$vuetify.forms.cancelBtn') }}
       </v-btn>
     </div>
   </v-form>
@@ -45,8 +45,13 @@ export default {
   data() {
     return {
       valid: true,
-      titleRules: [(v) => !!v || 'Title is required'],
-      descriptionRules: [(v) => !!v || 'Description is required'],
+      titleRules: [
+        (v) => !!v || this.$vuetify.lang.t('$vuetify.forms.titleRequired'),
+      ],
+      descriptionRules: [
+        (v) =>
+          !!v || this.$vuetify.lang.t('$vuetify.forms.descriptionRequired'),
+      ],
       formData: this.formProps
         ? { ...this.formProps }
         : {

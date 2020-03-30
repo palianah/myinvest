@@ -53,9 +53,9 @@ export default {
   computed: {
     formTitle() {
       if (this.editMode && this.modalComponent === 'item') {
-        return 'Edit Item'
+        return this.$vuetify.lang.t('$vuetify.forms.editItemTitle')
       } else if (this.editMode && this.modalComponent === 'group') {
-        return 'Edit Group'
+        return this.$vuetify.lang.t('$vuetify.forms.editGroupTitle')
       } else if (this.editMode && this.modalComponent === 'item-add') {
         return `Buy more ${this.modalItem.exposition}s from ${this.modalItem.title}`
       } else if (this.editMode && this.modalComponent === 'item-extract') {
@@ -63,9 +63,9 @@ export default {
       }
 
       if (this.modalComponent === 'group') {
-        return 'Add Group'
+        return this.$vuetify.lang.t('$vuetify.forms.addGroupTitle')
       } else if (this.modalComponent === 'item') {
-        return 'Add Item'
+        return this.$vuetify.lang.t('$vuetify.forms.addItemTitle')
       }
 
       return ''

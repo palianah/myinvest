@@ -3,7 +3,7 @@
     <div class="dashboard__chart">
       <v-card class="pa-5">
         <v-card-title class="pa-0 pb-3 text-center">
-          Capital Ratio in Percent
+          {{ $vuetify.lang.t('$vuetify.chart.capitalRationHeadline') }}
         </v-card-title>
 
         <DoghnutChart

@@ -11,7 +11,7 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
+    path: '/:lang',
     name: 'home',
     component: LandingPage,
     beforeEnter: (to, from, next) => {
@@ -23,7 +23,7 @@ const routes = [
     },
   },
   {
-    path: '/login',
+    path: '/:lang/login',
     name: 'login',
     component: Login,
     beforeEnter: (to, from, next) => {
@@ -35,7 +35,7 @@ const routes = [
     },
   },
   {
-    path: '/register',
+    path: '/:lang/register',
     name: 'register',
     component: Register,
     beforeEnter: (to, from, next) => {
@@ -47,7 +47,7 @@ const routes = [
     },
   },
   {
-    path: '/dashboard',
+    path: '/:lang/dashboard',
     name: 'dashboard',
     component: Dashboard,
     beforeEnter: (to, from, next) => {
@@ -59,7 +59,7 @@ const routes = [
     },
   },
   {
-    path: '/chart-view',
+    path: '/:lang/chart-view',
     name: 'chart-view',
     component: ChartView,
     beforeEnter: (to, from, next) => {
@@ -71,7 +71,7 @@ const routes = [
     },
   },
   {
-    path: '/examples',
+    path: '/:lang/examples',
     name: 'examples',
     component: Examples,
     beforeEnter: (to, from, next) => {

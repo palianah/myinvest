@@ -4,7 +4,7 @@
       <v-text-field
         v-model="email"
         :rules="emailRules"
-        label="E-mail"
+        :label="$vuetify.lang.t('$vuetify.auth.email')"
         required
       ></v-text-field>
 
@@ -13,16 +13,16 @@
         v-model="password"
         :rules="passwordRules"
         :counter="30"
-        label="Password"
+        :label="$vuetify.lang.t('$vuetify.auth.password')"
         required
       ></v-text-field>
 
       <div class="text-center">
         <v-btn type="submit" class="ma-2" color="primary">
-          Register
+          {{ $vuetify.lang.t('$vuetify.auth.registerBtn') }}
         </v-btn>
         <v-btn class="ma-2" color="error">
-          Cancel
+          {{ $vuetify.lang.t('$vuetify.auth.cancelBtn') }}
         </v-btn>
       </div>
     </v-container>
@@ -36,14 +36,19 @@ export default {
       valid: false,
       password: '',
       passwordRules: [
-        (v) => !!v || 'Password is required',
-        (v) => v.length >= 6 || 'Password must be greater than 6 characters',
-        (v) => v.length <= 30 || 'Password must be less than 10 characters',
+        (v) => !!v || this.$vuetify.lang.t('$vuetify.auth.passwordRequired'),
+        (v) =>
+          v.length >= 6 ||
+          this.$vuetify.lang.t('$vuetify.auth.passwordLength1'),
+        (v) =>
+          v.length <= 30 ||
+          this.$vuetify.lang.t('$vuetify.auth.passwordLength2'),
       ],
       email: '',
       emailRules: [
-        (v) => !!v || 'E-mail is required',
-        (v) => /.+@.+/.test(v) || 'E-mail must be valid',
+        (v) => !!v || this.$vuetify.lang.t('$vuetify.auth.emailRequired'),
+        (v) =>
+          /.+@.+/.test(v) || this.$vuetify.lang.t('$vuetify.auth.emailValid'),
       ],
     }
   },

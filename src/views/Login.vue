@@ -1,6 +1,8 @@
 <template>
   <div class="login">
-    <h2 class="text-center">Login to My Invest</h2>
+    <h2 class="text-center">
+      {{ $vuetify.lang.t('$vuetify.auth.login.headline') }}
+    </h2>
     <AuthForm @submit="onSubmit" />
   </div>
 </template>
@@ -16,11 +18,11 @@ export default {
       } else {
         console.alert('has error!')
       }
-    }
+    },
   },
   components: {
-    AuthForm
-  }
+    AuthForm,
+  },
 }
 </script>
 

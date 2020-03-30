@@ -2,7 +2,7 @@
   <div class="dashboard__table" v-if="filteredGroups.length">
     <v-card>
       <v-card-title>
-        My Portfolio
+        {{ $vuetify.lang.t('$vuetify.table.tableGroupHeadline') }}
         <v-spacer></v-spacer>
         <v-text-field
           v-model="groupSearch"
@@ -43,7 +43,7 @@
       </v-data-table>
       <div class="dashboard__table__footer__prepend">
         <p class="dashboard__table__footer__prepend__text">
-          Total:
+          {{ $vuetify.lang.t('$vuetify.table.footer.total') }}:
           <b><TweenNumber :value="totalCapitalAsset" /> €</b>
 
           <span
@@ -93,12 +93,26 @@ export default {
       modalItem: '',
       groupSearch: '',
       headers: [
-        { text: 'Name', value: 'title' },
-        { text: 'Description', value: 'description', width: '300' },
-        { text: 'Total invested', value: 'totalInvested' },
-        { text: 'Profit', value: 'profit', width: '150' },
         {
-          text: 'Actions',
+          text: this.$vuetify.lang.t('$vuetify.table.headlines.name'),
+          value: 'title',
+        },
+        {
+          text: this.$vuetify.lang.t('$vuetify.table.headlines.description'),
+          value: 'description',
+          width: '300',
+        },
+        {
+          text: this.$vuetify.lang.t('$vuetify.table.headlines.totalInvested'),
+          value: 'totalInvested',
+        },
+        {
+          text: this.$vuetify.lang.t('$vuetify.table.headlines.profit'),
+          value: 'profit',
+          width: '150',
+        },
+        {
+          text: this.$vuetify.lang.t('$vuetify.table.headlines.actions'),
           value: 'actions',
           width: '100',
           align: 'right',

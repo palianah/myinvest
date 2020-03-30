@@ -10,7 +10,7 @@
       class="item-extract-form__input"
       type="number"
       v-model="formData.amount"
-      label="Amount"
+      :label="$vuetify.lang.t('$vuetify.forms.amount')"
       :rules="amountRules"
       :max="formProps.amount"
       required
@@ -19,17 +19,17 @@
       class="item-extract-form__input"
       type="number"
       v-model="formData.averageStockPrice"
-      label="Current single stock price"
+      :label="$vuetify.lang.t('$vuetify.forms.currentSingleStockPrice')"
       :rules="emptyRule"
       required
     ></v-text-field>
 
     <div class="text-center">
       <v-btn type="submit" min-width="150" class="ma-2" color="primary">
-        Sell
+        {{ $vuetify.lang.t('$vuetify.forms.sellBtn') }}
       </v-btn>
       <v-btn class="ma-2" min-width="150" color="error" @click="$emit('close')">
-        Cancel
+        {{ $vuetify.lang.t('$vuetify.forms.cancelBtn') }}
       </v-btn>
     </div>
   </v-form>
@@ -47,10 +47,14 @@ export default {
   data() {
     return {
       valid: true,
-      emptyRule: [(v) => !!v || 'This field is required'],
+      emptyRule: [
+        (v) => !!v || this.$vuetify.lang.t('$vuetify.forms.fieldRequired'),
+      ],
       amountRules: [
-        (v) => !!v || 'This field is required',
-        (v) => v <= parseFloat(this.formProps.amount) || 'Amount is bigger than you own.',
+        (v) => !!v || this.$vuetify.lang.t('$vuetify.forms.fieldRequired'),
+        (v) =>
+          v <= parseFloat(this.formProps.amount) ||
+          this.$vuetify.lang.t('$vuetify.forms.amountBigger'),
       ],
       formData: {
         amount: this.formProps.amount ? this.formProps.amount : '',
@@ -78,7 +82,10 @@ export default {
 
       const amount = propsAmount - formAmount
       const totalInvested = amount * propsStockPrice
-      const currentValue = this.calculateCurrentValue(formAmount, propsStockPrice)
+      const currentValue = this.calculateCurrentValue(
+        formAmount,
+        propsStockPrice
+      )
       const profit = currentValue - totalInvested
 
       return {
