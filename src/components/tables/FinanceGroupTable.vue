@@ -2,7 +2,7 @@
   <div class="dashboard__table" v-if="filteredGroups.length">
     <v-card>
       <v-card-title>
-        My Investments
+        My Portfolio
         <v-spacer></v-spacer>
         <v-text-field
           v-model="groupSearch"
@@ -45,6 +45,20 @@
         <p class="dashboard__table__footer__prepend__text">
           Total:
           <b><TweenNumber :value="totalCapitalAsset" /> €</b>
+
+          <span
+            class="pl-2"
+            :class="{
+              'c-red': calculateTotalProfit < 0,
+              'c-green': calculateTotalProfit > 0,
+              'c-orange': calculateTotalProfit === 0,
+            }"
+          >
+            <v-icon class="dashboard__table__arrow">
+              mdi-{{ getTotalIcon }}
+            </v-icon>
+            <TweenNumber :value="calculateTotalProfit" /> %
+          </span>
         </p>
       </div>
     </v-card>
@@ -110,7 +124,7 @@ export default {
       const totalInvested = parseFloat(item.totalInvested)
       const profit = parseFloat(item.profit)
       if (totalInvested === 0 && profit === 0) {
-        return 0.00
+        return 0.0
       }
       const calc = parseFloat((profit / totalInvested) * 100).toFixed(2)
       return calc
@@ -138,6 +152,22 @@ export default {
   },
   computed: {
     ...mapGetters(['filteredGroups', 'totalCapitalAsset']),
+    calculateTotalProfit() {
+      let invested = 0
+      let profit = 0
+      this.filteredGroups.forEach((item) => {
+        invested += parseFloat(item.totalInvested)
+        profit += parseFloat(item.profit)
+      })
+      const finalProfit = parseFloat((profit / invested) * 100).toFixed(2)
+      return parseFloat(finalProfit)
+    },
+    getTotalIcon() {
+      const val = this.calculateTotalProfit
+      if (val > 0) return 'arrow-up-bold'
+      if (val < 0) return 'arrow-down-bold'
+      return 'swap-horizontal'
+    },
   },
   components: {
     FormDialog,

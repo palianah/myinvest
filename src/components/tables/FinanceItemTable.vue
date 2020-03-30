@@ -60,8 +60,24 @@
         </template>
         <template v-slot:footer>
           <div class="dashboard__table__footer">
-            Total:
-            <b><TweenNumber :value="totalCapitalAsset" /> € </b>
+            <div class="dashboard__table__footer__item">
+              Total:
+              <b><TweenNumber :value="totalCapitalAsset" /> € </b>
+            </div>
+            <div class="dashboard__table__footer__item">
+              <span
+                :class="{
+                  'c-red': calculateTotalProfit < 0,
+                  'c-green': calculateTotalProfit > 0,
+                  'c-orange': calculateTotalProfit === 0,
+                }"
+              >
+                <v-icon class="dashboard__table__arrow">
+                  mdi-{{ getTotalIcon }}
+                </v-icon>
+                <TweenNumber :value="calculateTotalProfit" /> %
+              </span>
+            </div>
           </div>
         </template>
       </v-data-table>
@@ -105,7 +121,7 @@ export default {
       modalItem: '',
       headers: [
         { text: 'Name', value: 'title' },
-        { text: 'Total invested', value: 'totalInvested' },
+        { text: 'Invested', value: 'totalInvested' },
         { text: 'Current Value', value: 'currentValue' },
         { text: 'Profit', value: 'profit' },
         {
@@ -177,20 +193,37 @@ export default {
     totalCapitalAsset() {
       let value = 0
       this.getItemsFromGroup.forEach((item) => {
-        value = parseFloat(item.currentValue)
+        value += parseFloat(item.currentValue)
       })
       return value
     },
+    calculateTotalProfit() {
+      let invested = 0
+      let profit = 0
+      this.getItemsFromGroup.forEach((item) => {
+        invested += parseFloat(item.totalInvested)
+        profit += parseFloat(item.profit)
+      })
+      const finalProfit = parseFloat((profit / invested) * 100).toFixed(2)
+      return parseFloat(finalProfit)
+    },
+    getTotalIcon() {
+      const val = this.calculateTotalProfit
+      if (val > 0) return 'arrow-up-bold'
+      if (val < 0) return 'arrow-down-bold'
+      return 'swap-horizontal'
+    },
   },
-  created() {    
+  created() {
     if (this.title === 'Stock' || this.title === 'ETF') {
       this.headers.splice(
         2,
         0,
         { text: 'Amount', value: 'amount' },
-        { text: 'Average stock price', value: 'averageStockPrice' }
+        { text: 'Av. stock price', value: 'averageStockPrice' }
       )
     }
+    // TODO: if cash, change invested to total value?
   },
   components: {
     FormDialog,
@@ -246,6 +279,21 @@ export default {
     border-top: thin solid rgba(0, 0, 0, 0.12);
     padding: 15px;
     font-size: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    &__item {
+      .c-red {
+        color: red;
+      }
+      .c-green {
+        color: green;
+      }
+      .c-orange {
+        color: orange;
+      }
+    }
   }
 }
 </style>

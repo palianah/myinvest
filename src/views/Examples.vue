@@ -4,19 +4,19 @@
       <v-col cols="12" md="4">
         <div class="dashboard__chart pr-5">
           <h2>Stock value in $</h2>
-          <BarChart :chartdata="barData" />
+          <BarChart :chartData="barData" />
         </div>
       </v-col>
       <v-col cols="12" md="4">
         <div class="dashboard__chart pr-5">
           <h2>Captial assets %</h2>
-          <DoghnutChart :chartdata="doghnutData" />
+          <DoghnutChart :chartData="doghnutData" />
         </div>
       </v-col>
       <v-col cols="12" md="4">
         <div class="dashboard__chart pr-5">
           <h2>Amount per Captial Group</h2>
-          <LineChart :chartdata="lineData" />
+          <LineChart :chartData="lineData" />
         </div>
       </v-col>
     </v-row>
@@ -49,68 +49,6 @@
         </v-data-table>
       </v-card>
     </div>
-
-    <br />
-    <hr />
-    <br />
-    <h2>TODO welche Auflistung ich brauche in Tabellenform</h2>
-    <ul>
-      <li>
-        Auflistung aller Gruppen e.g P2P, ETF, Aktien (inkl. Untergruppen
-        drunter, eingerückt)
-      </li>
-      <li>
-        Einzelne Gruppe als Headline, Auflistung Untergruppen, Anzahl, Budget,
-        Wie viel in Plus/Minus oder Rendite wenn P2P
-      </li>
-    </ul>
-
-    <br />
-    <hr />
-    <br />
-    <h2>TODO welche Auflistung ich brauche in Chart</h2>
-    <ul>
-      <li>
-        Doghnut Chart aller Gruppen, wie viel Prozent jede Gruppe investiert
-      </li>
-      <li>
-        Bar Chart aller Untergruppen (e.g AMD, Apple...), y-Achse ist
-        investierter Wert
-      </li>
-      <li>
-        Line Chart aller Single Aktien (e.g AMD, Apple...), y-Achse ist
-        Kurs-Wert, x-Achse ist Datum
-      </li>
-    </ul>
-
-    <br />
-    <hr />
-    <br />
-    <h2>TODO Features</h2>
-    <ul>
-      <li>
-        Total Capital assets anzeigen, links (nicht editierbar, dynamisch je
-        nach Items)
-      </li>
-      <li>
-        Obergruppe erstellen/editieren/löschen im Modal, Button links
-      </li>
-      <li>
-        Untergruppe erstellen/editieren/löschen im Modal, Dropdown Auswahl der
-        Obergruppe
-      </li>
-      <li>
-        Einzelne Untergruppen Amount/Wert hinzufügen/löschen können,
-        zusammenberechnen inklusive fee kosten wenn vorhanden
-      </li>
-      <li>
-        Stock API anbinden in Tabellen Item Ansicht, und meinen TotalWert von
-        AMD %-Wert und Total-Wert anzeigen
-      </li>
-      <li>
-        Stock API anbinden um aktuelle Kurse der Items anzuzeigen (andere Seite)
-      </li>
-    </ul>
   </div>
 </template>
 

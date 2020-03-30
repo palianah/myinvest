@@ -258,12 +258,22 @@ export default new Vuex.Store({
   },
   getters: {
     groupNames: (state) => {
-      if (!state.financeGroups) return ''
+      if (!state.financeGroups) return []
       const groupNames = []
       state.financeGroups.forEach((group, index) => {
         groupNames[index] = group.title
       })
       return groupNames
+    },
+    groupPercentValues: (_, getters) => {
+      if (!getters.filteredGroups || !getters.totalCapitalAsset) return []
+      const total = getters.totalCapitalAsset
+      const groupValues = []
+      getters.filteredGroups.forEach((item, index) => {
+        const value = ((parseFloat(item.currentValue) / total) * 100).toFixed(2)
+        groupValues[index] = parseFloat(value)
+      })
+      return groupValues
     },
     // adds to the finance groups the totalInvested and current value and profit properties
     filteredGroups: (state) => {

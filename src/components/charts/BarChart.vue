@@ -1,9 +1,15 @@
 <script>
-import { Bar } from 'vue-chartjs'
+import { Bar, mixins } from 'vue-chartjs'
 
 export default {
   extends: Bar,
-  props: ['chartdata'],
+  mixins: [mixins.reactiveProp],
+  props: {
+    chartData: {
+      type: Object,
+      default: null,
+    },
+  },
   data() {
     return {
       options: {
@@ -23,7 +29,7 @@ export default {
     }
   },
   mounted() {
-    this.renderChart(this.chartdata, this.options)
+    this.renderChart(this.chartData, this.options)
   },
 }
 </script>
