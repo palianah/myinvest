@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard px-5">
     <v-row class="justify-center">
-      <v-col cols="12" md="8">
+      <v-col cols="12" md="6">
         <v-card class="pa-5">
           <v-card-text class="dashboard__card__headline pa-0 pb-3">
             {{ $vuetify.lang.t('$vuetify.chart.capitalRationHeadline') }}
@@ -37,20 +37,16 @@
           </div>
         </v-card>
       </v-col>
-    </v-row>
-    <!-- <v-row class="py-7">
-      <v-col cols="12" md="6" v-for="group in financeGroups" :key="group.key">
-        <div class="dashboard__chart pr-5">
-          <v-card class="pa-5">
-            <v-card-title> {{ group.title }} </v-card-title>
-            <DoghnutChart
-              :chartData="itemValuesData(group.title)"
-              :options="percentOptions"
-            />
-          </v-card>
-        </div>
+
+      <v-col cols="12" md="6">
+        <v-card class="pa-5">
+          <v-card-text class="dashboard__card__headline pa-0 pb-3">
+            {{ $vuetify.lang.t('$vuetify.chart.customLineBarHeadline') }}
+          </v-card-text>
+          <CustomLineBar />
+        </v-card>
       </v-col>
-    </v-row> -->
+    </v-row>
   </div>
 </template>
 
@@ -58,6 +54,7 @@
 import { mapState, mapGetters } from 'vuex'
 import { filter, find } from 'lodash'
 import DoghnutChart from '@/components/charts/DoghnutChart'
+import CustomLineBar from '@/components/charts/CustomLineBar'
 
 export default {
   data() {
@@ -166,6 +163,7 @@ export default {
   },
   components: {
     DoghnutChart,
+    CustomLineBar,
   },
 }
 </script>
@@ -186,7 +184,7 @@ export default {
     &__doghnut {
       margin: 0 20px 0 0;
       width: 50%;
-      max-width: 400px;
+      max-width: 350px;
       flex: 1 0 50%;
     }
 
@@ -201,7 +199,8 @@ export default {
       justify-content: center;
 
       &__item {
-        padding-bottom: 15px;
+        font-size: 15px;
+        padding-bottom: 12px;
       }
 
       &__bubble {
@@ -217,11 +216,8 @@ export default {
       }
 
       &__value {
-        color: rgba(0, 0, 0, 0.6);
-        font-weight: bold;
-        font-size: 18px;
         display: inline-block;
-        padding-left: 20px;
+        padding-left: 10px;
       }
     }
   }

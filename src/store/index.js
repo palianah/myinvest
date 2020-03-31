@@ -312,6 +312,14 @@ export default new Vuex.Store({
       })
       return groupNames
     },
+    sortedItemsByPrice: (state) => {
+      if (!state.financeItems.length) return []
+
+      const sortedItems = state.financeItems.sort((a, b) => {
+        return parseFloat(b.totalInvested) - parseFloat(a.totalInvested)
+      })
+      return sortedItems
+    },
     groupPercentValues: (_, getters) => {
       if (!getters.filteredGroups || !getters.totalCapitalAsset) return []
       const total = getters.totalCapitalAsset

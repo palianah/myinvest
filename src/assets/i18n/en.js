@@ -56,6 +56,7 @@ export default {
   },
   chart: {
     capitalRationHeadline: 'Capital Ratio in Percent',
+    customLineBarHeadline: 'Grouped by Items',
   },
   forms: {
     addGroupTitle: 'Add Group',

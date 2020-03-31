@@ -78,7 +78,20 @@ export default {
     logout() {
       this.$store.dispatch('logout')
     },
+    checkIdTokenValid() {
+      const refreshToken = localStorage.getItem('refreshToken')
+      const expirationDate = Date.parse(localStorage.getItem('expirationDate'))
+      if (
+        !refreshToken ||
+        !expirationDate ||
+        new Date().getTime() >= expirationDate
+      ) {
+        this.$store.dispatch('refreshIdToken', refreshToken)
+      }
+    },
     redirectOrOpenModal(id) {
+      this.checkIdTokenValid()
+
       switch (id) {
         case 'group':
           this.formOpen = true

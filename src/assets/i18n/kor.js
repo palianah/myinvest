@@ -56,6 +56,7 @@ export default {
   },
   chart: {
     capitalRationHeadline: '자산분배 비율',
+    customLineBarHeadline: '종목별 정보',
   },
   forms: {
     addGroupTitle: '자산 그룹 추가',
