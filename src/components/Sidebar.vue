@@ -27,6 +27,8 @@
       @close="closeModal"
     />
 
+    <LanguageSwitcher />
+
     <v-btn class="sidebar__logout" small text @click="logout">
       <v-icon>mdi-logout</v-icon>
       <span>{{ $vuetify.lang.t('$vuetify.sidebar.logout') }}</span>
@@ -36,6 +38,7 @@
 
 <script>
 import FormDialog from '@/components/dialog/FormDialog'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export default {
   data() {
@@ -114,6 +117,7 @@ export default {
   },
   components: {
     FormDialog,
+    LanguageSwitcher,
   },
 }
 </script>

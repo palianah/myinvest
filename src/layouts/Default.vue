@@ -1,9 +1,9 @@
 <template>
   <div class="dashboard py-10">
-    <Sidebar />
+    <Sidebar :key="$route.fullPath" />
     <v-content class="dashboard__content">
       <div class="container container--fluid">
-        <router-view></router-view>
+        <router-view :key="$route.fullPath"></router-view>
       </div>
     </v-content>
   </div>

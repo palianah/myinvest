@@ -44,8 +44,7 @@ export default {
       return component
     },
   },
-  created() {
-    // TODO: get only every hour new currency to save request, and only if stock or etf exists!
+  mounted() {
     this.$store.dispatch('convertExchange', 'EUR/USD')
   },
   components: {

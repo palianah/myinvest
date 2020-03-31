@@ -1,8 +1,15 @@
 <template>
   <div class="dashboard__table pt-10">
     <v-card>
-      <v-card-title>
-        {{ title }}
+      <v-card-title class="dashboard__table__title">
+        <div>{{ title }}</div>
+        <div>
+          <v-icon
+            :title="$vuetify.lang.t('$vuetify.sidebar.addItem')"
+            @click="addItem"
+            >mdi-pencil-plus</v-icon
+          >
+        </div>
       </v-card-title>
       <v-data-table
         :headers="headers"
@@ -61,7 +68,7 @@
       :formOpen="formOpen"
       :modalComponent="modalComponent"
       :modalItem="modalItem"
-      :editMode="true"
+      :editMode="editMode"
       @close="closeFormDialog"
     />
     <ConfirmDialog
@@ -74,21 +81,18 @@
 
 <script>
 import { mapState } from 'vuex'
-import { filter } from 'lodash'
 import FormDialog from '@/components/dialog/FormDialog'
 import ConfirmDialog from '@/components/dialog/ConfirmDialog'
 import TweenNumber from '@/components/TweenNumber'
+import TableItemMixin from '@/mixins/TableItem.mixin'
 
 export default {
+  mixins: [TableItemMixin],
   props: {
     title: [String],
   },
   data() {
     return {
-      formOpen: false,
-      confirmOpen: false,
-      modalComponent: '',
-      modalItem: '',
       headers: [
         {
           text: this.$vuetify.lang.t('$vuetify.table.headlines.name'),
@@ -116,75 +120,8 @@ export default {
       ],
     }
   },
-  methods: {
-    getColor(profit) {
-      const val = parseFloat(profit)
-      if (val > 0) return 'c-green'
-      else if (val === 0) return 'c-orange'
-      else return 'c-red'
-    },
-    getIcon(profit) {
-      const val = parseFloat(profit)
-      if (val > 0) return 'arrow-up-bold'
-      if (val < 0) return 'arrow-down-bold'
-      return 'swap-horizontal'
-    },
-    calculateProfit(item) {
-      const totalInvested = parseFloat(item.totalInvested)
-      const profit = parseFloat(item.profit)
-      const calc = parseFloat((profit / totalInvested) * 100).toFixed(2)
-      return calc
-    },
-    editItem(item) {
-      this.formOpen = true
-      this.modalComponent = 'item'
-      this.modalItem = item
-    },
-    deleteItem(item) {
-      this.modalItem = item
-      this.confirmOpen = true
-    },
-    closeFormDialog() {
-      this.formOpen = false
-      this.modalComponent = ''
-      this.modalItem = ''
-    },
-    confirmEvent(payload) {
-      if (payload.mode === 'confirm') {
-        this.$store.dispatch('deleteFinanceItem', payload.key)
-      }
-      this.confirmOpen = false
-      this.modalItem = ''
-    },
-  },
   computed: {
     ...mapState(['financeItems']),
-    getItemsFromGroup() {
-      return filter(this.financeItems, { exposition: this.title })
-    },
-    totalCapitalAsset() {
-      let value = 0
-      this.getItemsFromGroup.forEach((item) => {
-        value += parseFloat(item.currentValue)
-      })
-      return value
-    },
-    calculateTotalProfit() {
-      let invested = 0
-      let profit = 0
-      this.getItemsFromGroup.forEach((item) => {
-        invested += parseFloat(item.totalInvested)
-        profit += parseFloat(item.profit)
-      })
-      const finalProfit = parseFloat((profit / invested) * 100).toFixed(2)
-      return parseFloat(finalProfit)
-    },
-    getTotalIcon() {
-      const val = this.calculateTotalProfit
-      if (val > 0) return 'arrow-up-bold'
-      if (val < 0) return 'arrow-down-bold'
-      return 'swap-horizontal'
-    },
   },
   components: {
     FormDialog,

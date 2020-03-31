@@ -1,6 +1,9 @@
 export default {
   langSwitcher: {
     lang: '언어:',
+    en: '영어',
+    de: '독일어',
+    kor: '한국어',
   },
   landingPage: {
     headline: '내 포트폴리오 렌딩페이지...',
@@ -17,19 +20,19 @@ export default {
     registerBtn: '가입하기',
     cancelBtn: '취소',
     login: {
-      headline: '마이인베스트에 로그인하기',
+      headline: '내 자산관리 로그인하기',
     },
     register: {
-      headline: '마이인베스트에 가입하기',
+      headline: '내 자산관리 가입하기',
     },
   },
   sidebar: {
-    headline: '마이인베스트',
-    listView: '리스트뷰',
-    chartView: '차트뷰',
+    headline: '자산관리',
+    listView: '포트폴리오',
+    chartView: '자산분배',
     examples: '예시',
-    addGroup: '그룹 추가하기',
-    addItem: '아이템 추가하기',
+    addGroup: '자산 그룹 추가하기',
+    addItem: '자산 아이템 추가하기',
     logout: '로그아웃',
   },
   table: {
@@ -52,13 +55,13 @@ export default {
     },
   },
   chart: {
-    capitalRationHeadline: '자산분배 퍼센테이지',
+    capitalRationHeadline: '자산분배 비율',
   },
   forms: {
-    addGroupTitle: '그룹 추가',
-    editGroupTitle: '그룹 수정',
-    addItemTitle: '아이템 추가',
-    editItemTitle: '아이템 수정',
+    addGroupTitle: '자산 그룹 추가',
+    editGroupTitle: '자산 그룹 수정',
+    addItemTitle: '자산 아이템 추가',
+    editItemTitle: '자산 아이템 수정',
     deleteMessage: 'Are you sure to delete',
     confirmBtn: '네',
     buyBtn: '사기',
@@ -79,5 +82,41 @@ export default {
     currentValue: '현재금액',
     fieldRequired: 'This field is required',
     amountBigger: '가진 갯수보다 더 큽니다',
+  },
+  // vuetify defaults
+  close: 'Close',
+  dataIterator: {
+    pageText: '{0}-{1} of {2}',
+    noResultsText: 'No matching records found',
+    loadingText: 'Loading items...',
+  },
+  dataTable: {
+    itemsPerPageText: 'Rows per page:',
+    ariaLabel: {
+      sortDescending: ': Sorted descending. Activate to remove sorting.',
+      sortAscending: ': Sorted ascending. Activate to sort descending.',
+      sortNone: ': Not sorted. Activate to sort ascending.',
+    },
+    sortBy: 'Sort by',
+  },
+  dataFooter: {
+    pageText: '{0}-{1} of {2}',
+    itemsPerPageText: 'Items per page:',
+    itemsPerPageAll: 'All',
+    nextPage: 'Next page',
+    prevPage: 'Previous page',
+    firstPage: 'First page',
+    lastPage: 'Last page',
+  },
+  datePicker: {
+    itemsSelected: '{0} selected',
+  },
+  noDataText: 'No data available',
+  carousel: {
+    prev: 'Previous visual',
+    next: 'Next visual',
+  },
+  calendar: {
+    moreEvents: '{0} more',
   },
 }

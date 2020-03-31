@@ -11,6 +11,17 @@ Vue.use(VueRouter)
 
 const routes = [
   {
+    path: '/',
+    beforeEnter: (to, from, next) => {
+      if (localStorage.getItem('token')) {
+        next({ name: 'dashboard', params: { lang: 'en' } })
+        return
+      } else {
+        next({ name: 'login', params: { lang: 'en' } })
+      }
+    },
+  },
+  {
     path: '/:lang',
     name: 'home',
     component: LandingPage,

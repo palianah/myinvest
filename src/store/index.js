@@ -6,6 +6,7 @@ import DataService from '@/services/data.service'
 import FinanceService from '@/services/finance.service'
 import router from '@/router'
 import initialState from '@/store/initialState'
+import utilsTimer from '@/utils/timer'
 
 Vue.use(Vuex)
 
@@ -102,11 +103,8 @@ export default new Vuex.Store({
             userId: res.data.localId,
           })
           commit('SET_LAYOUT', 'default')
-          const now = new Date()
-          const expirationDate = new Date(
-            now.getTime() + res.data.expiresIn * 1000
-          )
-          localStorage.setItem('expirationDate', expirationDate.getTime())
+          const expirationDate = utilsTimer.addMinutes(new Date(), 55) // 55min
+          localStorage.setItem('expirationDate', expirationDate)
           localStorage.setItem('token', res.data.idToken)
           localStorage.setItem('refreshToken', res.data.refreshToken)
           localStorage.setItem('userId', res.data.localId)
@@ -126,11 +124,9 @@ export default new Vuex.Store({
             userId: res.data.localId,
           })
           commit('SET_LAYOUT', 'default')
-          const now = new Date()
-          const expirationDate = new Date(
-            now.getTime() + res.data.expiresIn * 1000
-          )
-          localStorage.setItem('expirationDate', expirationDate.getTime())
+
+          const expirationDate = utilsTimer.addMinutes(new Date(), 55) // 55min
+          localStorage.setItem('expirationDate', expirationDate)
           localStorage.setItem('refreshToken', res.data.refreshToken)
           localStorage.setItem('token', res.data.idToken)
           localStorage.setItem('userId', res.data.localId)
@@ -147,9 +143,8 @@ export default new Vuex.Store({
         return
       }
 
-      const expirationDate = parseInt(localStorage.getItem('expirationDate'))
-      const now = new Date().getTime()
-      if (now >= expirationDate) {
+      const expirationDate = Date.parse(localStorage.getItem('expirationDate'))
+      if (new Date().getTime() >= expirationDate) {
         dispatch('refreshIdToken', refreshToken)
       }
 
@@ -170,9 +165,8 @@ export default new Vuex.Store({
             token: res.data.id_token,
           })
 
-          const now = new Date()
-          const expirationDate = new Date(now.getTime() + 3600 * 1000)
-          localStorage.setItem('expirationDate', expirationDate.getTime())
+          const expirationDate = utilsTimer.addMinutes(new Date(), 55) // 55min
+          localStorage.setItem('expirationDate', expirationDate)
           localStorage.setItem('token', res.data.id_token)
         })
         .catch((e) => console.error(e))
@@ -279,25 +273,27 @@ export default new Vuex.Store({
       FinanceService.forex(symbol).then((res) => {
         commit('UPDATE_FOREX', {
           key: symbol,
-          value: res.data.price,
+          value: parseFloat(res.data.price),
         })
       })
     },
     realStockPrice({ state }, item) {
-      if (!state.forex) return ''
+      if (!state.forex || !state.forex.value) return 0
 
       return FinanceService.quote(item.stockID)
         .then((res) => {
-          const price = res.data.close
+          const price = parseFloat(res.data.close)
           const dif = parseFloat(state.forex.value)
-          let result = parseFloat(price).toFixed(2)
+          let real_price = price.toFixed(2)
+
           if (item.market === 'US') {
             // TODO: check language and global currency in future!
-            result = parseFloat(price / dif).toFixed(2)
+            real_price = parseFloat(price / dif).toFixed(2)
           }
+
           return {
             ...res.data,
-            real_price: result,
+            real_price: parseFloat(real_price),
           }
         })
         .catch((e) => console.error(e))
@@ -306,8 +302,12 @@ export default new Vuex.Store({
   getters: {
     groupNames: (state) => {
       if (!state.financeGroups) return []
+      // sort highest val to lowest
+      const sortedGroups = state.financeGroups.sort(
+        (a, b) => b.totalInvested - a.totalInvested
+      )
       const groupNames = []
-      state.financeGroups.forEach((group, index) => {
+      sortedGroups.forEach((group, index) => {
         groupNames[index] = group.title
       })
       return groupNames
@@ -320,7 +320,9 @@ export default new Vuex.Store({
         const value = ((parseFloat(item.currentValue) / total) * 100).toFixed(2)
         groupValues[index] = parseFloat(value)
       })
-      return groupValues
+
+      // sort highest to lowest
+      return groupValues.sort((a, b) => b - a)
     },
     // adds to the finance groups the totalInvested and current value and profit properties
     filteredGroups: (state) => {

@@ -8,6 +8,7 @@
 import { mapState } from 'vuex'
 import LandingLayout from '@/layouts/Landing'
 import DefaultLayout from './layouts/Default'
+import Footer from './components/Footer'
 
 export default {
   name: 'App',
@@ -25,6 +26,7 @@ export default {
   components: {
     landing: LandingLayout,
     default: DefaultLayout,
+    Footer,
   },
   created() {
     this.$vuetify.lang.current = this.$route.params.lang

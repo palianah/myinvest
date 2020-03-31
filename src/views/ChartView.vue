@@ -1,20 +1,44 @@
 <template>
   <div class="dashboard px-5">
-    <div class="dashboard__chart">
-      <v-card class="pa-5">
-        <v-card-title class="pa-0 pb-3 text-center">
-          {{ $vuetify.lang.t('$vuetify.chart.capitalRationHeadline') }}
-        </v-card-title>
-
-        <DoghnutChart
-          v-if="groupValuesLoaded"
-          :chartData="groupPercentData"
-          :options="percentOptions"
-        />
-      </v-card>
-    </div>
-
-    <v-row class="py-7">
+    <v-row class="justify-center">
+      <v-col cols="12" md="8">
+        <v-card class="pa-5">
+          <v-card-text class="dashboard__card__headline pa-0 pb-3">
+            {{ $vuetify.lang.t('$vuetify.chart.capitalRationHeadline') }}
+          </v-card-text>
+          <div class="dashboard__chart">
+            <DoghnutChart
+              class="dashboard__chart__doghnut"
+              v-if="groupValuesLoaded"
+              :chartData="groupPercentData"
+              :options="percentOptions"
+            />
+            <ul class="dashboard__chart__legend" v-if="groupPercentData">
+              <li
+                class="dashboard__chart__legend__item"
+                v-for="(data, index) in groupPercentData.datasets[0].data"
+                :key="data"
+              >
+                <span
+                  class="dashboard__chart__legend__bubble"
+                  :style="{
+                    backgroundColor:
+                      groupPercentData.datasets[0].backgroundColor[index],
+                  }"
+                ></span>
+                <span class="dashboard__chart__legend__text">
+                  {{ groupPercentData.labels[index] }}
+                </span>
+                <span class="dashboard__chart__legend__value">
+                  {{ data }}%
+                </span>
+              </li>
+            </ul>
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
+    <!-- <v-row class="py-7">
       <v-col cols="12" md="6" v-for="group in financeGroups" :key="group.key">
         <div class="dashboard__chart pr-5">
           <v-card class="pa-5">
@@ -26,7 +50,7 @@
           </v-card>
         </div>
       </v-col>
-    </v-row>
+    </v-row> -->
   </div>
 </template>
 
@@ -38,8 +62,14 @@ import DoghnutChart from '@/components/charts/DoghnutChart'
 export default {
   data() {
     return {
+      groupLegend: null,
       groupPercentData: null,
       percentOptions: {
+        legend: {
+          display: false,
+          position: 'right',
+          align: 'center',
+        },
         tooltips: {
           callbacks: {
             label: function (item, data) {
@@ -140,11 +170,60 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .dashboard {
+  &__card__headline {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
   &__chart {
-    margin: 0 auto;
-    max-width: 400px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    &__doghnut {
+      margin: 0 20px 0 0;
+      width: 50%;
+      max-width: 400px;
+      flex: 1 0 50%;
+    }
+
+    &__legend {
+      flex: 1 0 40%;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      width: 40%;
+      display: flex;
+      flex-flow: column;
+      justify-content: center;
+
+      &__item {
+        padding-bottom: 15px;
+      }
+
+      &__bubble {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+
+      &__text {
+        padding-left: 5px;
+        display: inline-block;
+      }
+
+      &__value {
+        color: rgba(0, 0, 0, 0.6);
+        font-weight: bold;
+        font-size: 18px;
+        display: inline-block;
+        padding-left: 20px;
+      }
+    }
   }
 }
 </style>

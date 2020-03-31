@@ -1,22 +1,22 @@
 <template>
   <div class="dashboard__table" v-if="filteredGroups.length">
     <v-card>
-      <v-card-title>
-        {{ $vuetify.lang.t('$vuetify.table.tableGroupHeadline') }}
-        <v-spacer></v-spacer>
-        <v-text-field
-          v-model="groupSearch"
-          append-icon="mdi-magnify"
-          label="Search"
-          single-line
-          hide-details
-        ></v-text-field>
+      <v-card-title class="dashboard__table__title">
+        <div>{{ $vuetify.lang.t('$vuetify.table.tableGroupHeadline') }}</div>
+        <div>
+          <v-icon
+            :title="$vuetify.lang.t('$vuetify.sidebar.addGroup')"
+            @click="addGroup"
+            >mdi-pencil-plus</v-icon
+          >
+        </div>
       </v-card-title>
       <v-data-table
+        v-model="selected"
         :headers="headers"
         :items="filteredGroups"
         :items-per-page="10"
-        :search="groupSearch"
+        hide-default-footer
         class="elevation-1"
       >
         <template v-slot:item.totalInvested="{ item }">
@@ -40,34 +40,37 @@
             >mdi-delete</v-icon
           >
         </template>
+        <template v-slot:footer>
+          <div class="dashboard__table__footer">
+            <div class="dashboard__table__footer__item">
+              {{ $vuetify.lang.t('$vuetify.table.footer.total') }}:
+              <b><TweenNumber :value="totalCapitalAsset" /> €</b>
+            </div>
+            <div class="dashboard__table__footer__item">
+              <span
+                class="pl-2"
+                :class="{
+                  'c-red': calculateTotalProfit < 0,
+                  'c-green': calculateTotalProfit > 0,
+                  'c-orange': calculateTotalProfit === 0,
+                }"
+              >
+                <v-icon class="dashboard__table__arrow">
+                  mdi-{{ getTotalIcon }}
+                </v-icon>
+                <TweenNumber :value="calculateTotalProfit" /> %
+              </span>
+            </div>
+          </div>
+        </template>
       </v-data-table>
-      <div class="dashboard__table__footer__prepend">
-        <p class="dashboard__table__footer__prepend__text">
-          {{ $vuetify.lang.t('$vuetify.table.footer.total') }}:
-          <b><TweenNumber :value="totalCapitalAsset" /> €</b>
-
-          <span
-            class="pl-2"
-            :class="{
-              'c-red': calculateTotalProfit < 0,
-              'c-green': calculateTotalProfit > 0,
-              'c-orange': calculateTotalProfit === 0,
-            }"
-          >
-            <v-icon class="dashboard__table__arrow">
-              mdi-{{ getTotalIcon }}
-            </v-icon>
-            <TweenNumber :value="calculateTotalProfit" /> %
-          </span>
-        </p>
-      </div>
     </v-card>
 
     <FormDialog
       :formOpen="formOpen"
       :modalComponent="modalComponent"
       :modalItem="modalItem"
-      :editMode="true"
+      :editMode="editMode"
       @close="closeFormDialog"
     />
     <ConfirmDialog
@@ -89,9 +92,10 @@ export default {
     return {
       formOpen: false,
       confirmOpen: false,
+      editMode: true,
       modalComponent: '',
       modalItem: '',
-      groupSearch: '',
+      selected: [],
       headers: [
         {
           text: this.$vuetify.lang.t('$vuetify.table.headlines.name'),
@@ -148,6 +152,11 @@ export default {
       this.modalComponent = 'group'
       this.modalItem = item
     },
+    addGroup() {
+      this.formOpen = true
+      this.modalComponent = 'group'
+      this.editMode = false
+    },
     deleteGroup(item) {
       this.modalItem = item
       this.confirmOpen = true
@@ -156,6 +165,7 @@ export default {
       this.formOpen = false
       this.modalComponent = ''
       this.modalItem = ''
+      this.editMode = true
     },
     confirmEvent(payload) {
       if (payload.mode === 'confirm') {
@@ -190,17 +200,3 @@ export default {
   },
 }
 </script>
-
-<style lang="less">
-.dashboard__table {
-  &__footer__prepend {
-    margin-top: -58px;
-    height: 58px;
-
-    &__text {
-      font-size: 15px;
-      padding: 17px;
-    }
-  }
-}
-</style>
