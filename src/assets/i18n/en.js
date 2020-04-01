@@ -1,4 +1,19 @@
 export default {
+  tour: {
+    helper: 'Restart tour',
+    skipBtn: 'Skip tour',
+    prevBtn: 'Previous',
+    nextBtn: 'Next',
+    stopBtn: 'Finish tour',
+    step1:
+      'Welcome! You can see your total summary of groups and items in your portfolio.',
+    step2: 'Here you have a chart view of your Finance Balances.',
+    step3: 'Add your own Finance Group like Stocks, Krypto, Cash.',
+    step4:
+      'Now its time to add items to your groups like bitcoin for Krypto or apple for Stocks?',
+    step5:
+      'Change your language here. Now its time to have fun playing with your Finance Data!',
+  },
   langSwitcher: {
     lang: 'Languages:',
     en: 'English',

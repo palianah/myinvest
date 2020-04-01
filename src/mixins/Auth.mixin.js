@@ -32,7 +32,7 @@ const auth = {
     ...mapState(['authError']),
   },
   beforeRouteLeave(to, from, next) {
-    this.$store.commit('AUTH_ERROR', '')
+    this.$store.commit('AUTH_MESSAGE', '')
     next()
   },
 }

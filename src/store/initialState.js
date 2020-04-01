@@ -1,6 +1,7 @@
 const initialState = {
   authError: '',
   layout: 'landing',
+  showTour: null,
   idToken: null, // expires every hour, needed for firebase requests
   refreshToken: null, // unexpired token for login
   userId: null,

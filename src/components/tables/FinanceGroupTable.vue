@@ -184,6 +184,7 @@ export default {
         profit += parseFloat(item.profit)
       })
       const finalProfit = parseFloat((profit / invested) * 100).toFixed(2)
+      if (finalProfit === 'NaN') return 0
       return parseFloat(finalProfit)
     },
     getTotalIcon() {

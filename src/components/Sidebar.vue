@@ -10,6 +10,7 @@
         :key="item.title"
         link
         @click.stop="redirectOrOpenModal(item.id)"
+        :id="item.cssId"
       >
         <v-list-item-icon>
           <v-icon>{{ item.icon }}</v-icon>
@@ -27,12 +28,22 @@
       @close="closeModal"
     />
 
-    <LanguageSwitcher />
+    <LanguageSwitcher id="v-step-5" />
 
-    <v-btn class="sidebar__logout" small text @click="logout">
-      <v-icon>mdi-logout</v-icon>
-      <span>{{ $vuetify.lang.t('$vuetify.sidebar.logout') }}</span>
-    </v-btn>
+    <div class="sidebar__actions">
+      <v-btn class="sidebar__logout" small text @click="logout">
+        <v-icon>mdi-logout</v-icon>
+        <span>{{ $vuetify.lang.t('$vuetify.sidebar.logout') }}</span>
+      </v-btn>
+
+      <v-icon
+        class="sidebar__helper"
+        @click="startTour"
+        :title="$vuetify.lang.t('$vuetify.tour.helper')"
+      >
+        mdi-help-circle
+      </v-icon>
+    </div>
   </v-navigation-drawer>
 </template>
 
@@ -48,11 +59,13 @@ export default {
       items: [
         {
           id: 'table',
+          cssId: 'v-step-1',
           title: this.$vuetify.lang.t('$vuetify.sidebar.listView'),
           icon: 'mdi-format-list-bulleted',
         },
         {
           id: 'chart',
+          cssId: 'v-step-2',
           title: this.$vuetify.lang.t('$vuetify.sidebar.chartView'),
           icon: 'mdi-finance',
         },
@@ -63,11 +76,13 @@ export default {
         },
         {
           id: 'group',
+          cssId: 'v-step-3',
           title: this.$vuetify.lang.t('$vuetify.sidebar.addGroup'),
           icon: 'mdi-pencil-plus',
         },
         {
           id: 'item',
+          cssId: 'v-step-4',
           title: this.$vuetify.lang.t('$vuetify.sidebar.addItem'),
           icon: 'mdi-pencil-plus',
         },
@@ -127,6 +142,9 @@ export default {
       this.formOpen = false
       this.modalComponent = ''
     },
+    startTour() {
+      this.$store.commit('SHOW_TOUR', true)
+    },
   },
   components: {
     FormDialog,
@@ -141,10 +159,14 @@ export default {
     color: white;
   }
 
-  &__logout {
+  &__actions {
     position: absolute;
     bottom: 20px;
-    left: 15px;
+    left: 0;
+    width: 100%;
+    padding: 0 25px 0 0;
+    display: flex;
+    justify-content: space-between;
   }
 }
 </style>

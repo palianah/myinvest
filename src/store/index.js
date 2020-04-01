@@ -22,18 +22,25 @@ export default new Vuex.Store({
       state.userId = userData.userId
       state.authError = ''
     },
-    AUTH_ERROR(state, target) {
+    AUTH_MESSAGE(state, target) {
       state.authError = target
     },
-    CLEAR_AUTH_DATA(state) {
+    CLEAR_DATA(state) {
       state.idToken = null
       state.refreshToken = null
       state.userId = null
       state.authError = ''
+      state.financeGroups = []
+      state.financeItems = []
+      state.forex = {}
+      state.showTour = null
       localStorage.removeItem('token')
       localStorage.removeItem('userId')
       localStorage.removeItem('refreshToken')
       localStorage.removeItem('expirationDate')
+    },
+    SHOW_TOUR(state, tour) {
+      state.showTour = tour
     },
     ADD_FINANCE_GROUP(state, groupData) {
       if (groupData.multiple) {
@@ -93,7 +100,7 @@ export default new Vuex.Store({
   actions: {
     setLogoutTimer({ commit }, expirationTime) {
       setTimeout(() => {
-        commit('CLEAR_AUTH_DATA')
+        commit('CLEAR_DATA')
       }, expirationTime) // * 1000
     },
     signup({ commit }, authData) {
@@ -117,7 +124,7 @@ export default new Vuex.Store({
         })
         .catch((e) => {
           console.error('error signup: ', e)
-          commit('AUTH_ERROR', 'register')
+          commit('AUTH_MESSAGE', 'register')
         })
     },
     login({ commit }, authData) {
@@ -142,7 +149,7 @@ export default new Vuex.Store({
         })
         .catch((e) => {
           console.error('error login: ', e)
-          commit('AUTH_ERROR', 'login')
+          commit('AUTH_MESSAGE', 'login')
         })
     },
     tryAutoLogin({ dispatch, commit }) {
@@ -163,7 +170,7 @@ export default new Vuex.Store({
       commit('SET_LAYOUT', 'default')
     },
     logout({ commit }) {
-      commit('CLEAR_AUTH_DATA')
+      commit('CLEAR_DATA')
       commit('SET_LAYOUT', 'landing')
       router.replace({ name: 'login' })
     },
@@ -212,7 +219,12 @@ export default new Vuex.Store({
     getFinanceGroups({ commit }) {
       DataService.getGroups()
         .then((res) => {
-          commit('ADD_FINANCE_GROUP', { ...res.data, multiple: true })
+          if (Object.keys(res.data).length) {
+            commit('SHOW_TOUR', false)
+            commit('ADD_FINANCE_GROUP', { ...res.data, multiple: true })
+          } else {
+            commit('SHOW_TOUR', true)
+          }
         })
         .catch((e) => console.error(e))
     },
@@ -259,7 +271,9 @@ export default new Vuex.Store({
     getFinanceItems({ commit }) {
       DataService.getItems()
         .then((res) => {
-          commit('ADD_FINANCE_ITEM', { ...res.data, multiple: true })
+          if (Object.keys(res.data).length) {
+            commit('ADD_FINANCE_ITEM', { ...res.data, multiple: true })
+          }
         })
         .catch((e) => console.error(e))
     },

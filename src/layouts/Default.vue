@@ -6,15 +6,19 @@
         <router-view :key="$route.fullPath"></router-view>
       </div>
     </v-content>
+
+    <TourApp />
   </div>
 </template>
 
 <script>
 import Sidebar from '@/components/Sidebar'
+import TourApp from '@/components/TourApp'
 
 export default {
   components: {
     Sidebar,
+    TourApp,
   },
 }
 </script>
