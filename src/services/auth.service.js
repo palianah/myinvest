@@ -18,13 +18,14 @@ const refreshAuth = axios.create({
 
 export default {
   register(form) {
-    return auth.post(
+    const request = auth.post(
       `/accounts:signUp?key=${process.env.VUE_APP_FIREBASE_TOKEN}`,
       {
         ...form,
         returnSecureToken: true,
       }
     )
+    return request
   },
   login(form) {
     return auth.post(

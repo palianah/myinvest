@@ -18,7 +18,10 @@ export default {
     passwordLength2: 'Password must be less than 10 characters',
     loginBtn: '로그인',
     registerBtn: '가입하기',
-    cancelBtn: '취소',
+    noAccount: '가입하기',
+    haveAccount: '로그인하기',
+    loginError: '로그인 정보가 일치하지 않습니다.',
+    emailExists: '이 이메일주소는 이미 사용중입니다.',
     login: {
       headline: '내 자산관리 로그인하기',
     },

@@ -1,8 +1,6 @@
 <template>
   <v-content>
-    <div class="landing">
-      <router-view :key="$route.fullPath"></router-view>
-    </div>
+    <router-view :key="$route.fullPath"></router-view>
   </v-content>
 </template>
 

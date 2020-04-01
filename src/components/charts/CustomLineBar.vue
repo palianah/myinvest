@@ -67,7 +67,6 @@ export default {
     }
   },
   methods: {
-    // jedes item muss currentValue / totalCapitalAsset berechnen um Prozentwert zu bekommen
     itemPercent(currentValue) {
       const item = parseFloat(currentValue)
       const total = parseFloat(this.totalCapitalAsset)

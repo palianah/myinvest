@@ -18,12 +18,15 @@ export default {
     passwordLength2: 'Password must be less than 10 characters',
     loginBtn: 'Login',
     registerBtn: 'Register',
-    cancelBtn: 'Cancel',
+    noAccount: 'No Account?',
+    haveAccount: 'Login',
+    loginError: 'E-Mail or Password is not correct.',
+    emailExists: 'This E-Mail is already in use.',
     login: {
-      headline: 'Login to My Invest',
+      headline: 'Login to MyInvest',
     },
     register: {
-      headline: 'Register to My Invest',
+      headline: 'Register to MyInvest',
     },
   },
   sidebar: {
@@ -56,7 +59,7 @@ export default {
   },
   chart: {
     capitalRationHeadline: 'Capital Ratio in Percent',
-    customLineBarHeadline: 'Grouped by Items',
+    customLineBarHeadline: 'Listed by Items',
   },
   forms: {
     addGroupTitle: 'Add Group',

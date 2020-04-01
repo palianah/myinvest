@@ -20,11 +20,16 @@ export default new Vuex.Store({
       state.idToken = userData.token
       state.refreshToken = userData.refreshToken
       state.userId = userData.userId
+      state.authError = ''
+    },
+    AUTH_ERROR(state, target) {
+      state.authError = target
     },
     CLEAR_AUTH_DATA(state) {
       state.idToken = null
       state.refreshToken = null
       state.userId = null
+      state.authError = ''
       localStorage.removeItem('token')
       localStorage.removeItem('userId')
       localStorage.removeItem('refreshToken')
@@ -110,7 +115,10 @@ export default new Vuex.Store({
           localStorage.setItem('userId', res.data.localId)
           router.push({ name: 'dashboard' })
         })
-        .catch((e) => console.error(e))
+        .catch((e) => {
+          console.error('error signup: ', e)
+          commit('AUTH_ERROR', 'register')
+        })
     },
     login({ commit }, authData) {
       AuthService.login({
@@ -132,7 +140,10 @@ export default new Vuex.Store({
           localStorage.setItem('userId', res.data.localId)
           router.push({ name: 'dashboard' })
         })
-        .catch((e) => console.error(e))
+        .catch((e) => {
+          console.error('error login: ', e)
+          commit('AUTH_ERROR', 'login')
+        })
     },
     tryAutoLogin({ dispatch, commit }) {
       const refreshToken = localStorage.getItem('refreshToken')
@@ -154,7 +165,7 @@ export default new Vuex.Store({
     logout({ commit }) {
       commit('CLEAR_AUTH_DATA')
       commit('SET_LAYOUT', 'landing')
-      router.replace({ name: 'home' })
+      router.replace({ name: 'login' })
     },
     refreshIdToken({ state, commit }, refreshToken) {
       AuthService.refreshIdToken(refreshToken)
@@ -304,7 +315,7 @@ export default new Vuex.Store({
       if (!state.financeGroups) return []
       // sort highest val to lowest
       const sortedGroups = state.financeGroups.sort(
-        (a, b) => b.totalInvested - a.totalInvested
+        (a, b) => b.currentValue - a.currentValue
       )
       const groupNames = []
       sortedGroups.forEach((group, index) => {
@@ -316,7 +327,7 @@ export default new Vuex.Store({
       if (!state.financeItems.length) return []
 
       const sortedItems = state.financeItems.sort((a, b) => {
-        return parseFloat(b.totalInvested) - parseFloat(a.totalInvested)
+        return parseFloat(b.currentValue) - parseFloat(a.currentValue)
       })
       return sortedItems
     },
