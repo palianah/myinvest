@@ -30,6 +30,12 @@
             </v-icon>
             <TweenNumber :value="calculateProfit(item)" :formatPrice="false" />
             %
+            <span class="dashboard__table__profit__text">
+              (
+              <span v-if="Math.sign(item.profit) !== -1">+</span>
+              <TweenNumber :value="item.profit" />
+              €)
+            </span>
           </span>
         </template>
         <template v-slot:item.actions="{ item }">
@@ -59,6 +65,12 @@
                   mdi-{{ getTotalIcon }}
                 </v-icon>
                 <TweenNumber :value="calculateTotalProfit" /> %
+                <span class="dashboard__table__profit__text">
+                  (
+                  <span v-if="Math.sign(totalProfit) !== -1">+</span>
+                  <TweenNumber :value="totalProfit" />
+                  €)
+                </span>
               </span>
             </div>
           </div>
@@ -175,7 +187,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['filteredGroups', 'totalCapitalAsset']),
+    ...mapGetters(['filteredGroups', 'totalCapitalAsset', 'totalProfit']),
     calculateTotalProfit() {
       let invested = 0
       let profit = 0

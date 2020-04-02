@@ -13,7 +13,7 @@
       </v-card-title>
       <v-data-table
         :headers="headers"
-        :items="getItemsFromGroup"
+        :items="tableItems"
         :items-per-page="10"
         hide-default-footer
         class="elevation-1"

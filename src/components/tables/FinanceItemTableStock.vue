@@ -13,7 +13,7 @@
       </v-card-title>
       <v-data-table
         :headers="headers"
-        :items="getItemsFromGroup"
+        :items="tableItems"
         :items-per-page="10"
         hide-default-footer
         class="elevation-1"
@@ -76,6 +76,12 @@
             </v-icon>
             <TweenNumber :value="calculateProfit(item)" :formatPrice="false" />
             %
+            <span class="dashboard__table__profit__text">
+              (
+              <span v-if="Math.sign(parseFloat(item.profit)) !== -1">+</span>
+              <TweenNumber :value="item.profit" />
+              €)
+            </span>
           </span>
         </template>
         <template v-slot:item.actions="{ item }">
@@ -182,13 +188,18 @@ export default {
   watch: {
     forex(forex) {
       if (forex && forex.value) {
-        this.getItemsFromGroup.forEach((item) => {
-          this.$store.dispatch('realStockPrice', item).then((res) => {
-            // reactivity for deep objects:
-            // https://vuejs.org/v2/guide/reactivity.html#For-Objects
-            this.$set(this.stockData, item.stockID, res)
-            this.updateItem(res, item)
-          })
+        this.$store.dispatch('realStockPrice', this.tableItems).then((res) => {
+          // reactivity for deep objects:
+          // https://vuejs.org/v2/guide/reactivity.html#For-Objects
+          if (this.tableItems.length > 1) {
+            Object.values(res).forEach((data, i) => {
+              this.$set(this.stockData, data.symbol, data)
+              this.updateItem(data, this.tableItems[i])
+            })
+          } else {
+            this.$set(this.stockData, res.symbol, res)
+            this.updateItem(res, this.tableItems[0])
+          }
         })
       }
     },

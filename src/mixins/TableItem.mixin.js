@@ -87,12 +87,12 @@ const tableItem = {
     },
   },
   computed: {
-    getItemsFromGroup() {
+    tableItems() {
       return filter(this.financeItems, { exposition: this.title })
     },
     totalCapitalAsset() {
       let value = 0
-      this.getItemsFromGroup.forEach((item) => {
+      this.tableItems.forEach((item) => {
         value += parseFloat(item.currentValue)
       })
       return value
@@ -100,7 +100,7 @@ const tableItem = {
     calculateTotalProfit() {
       let invested = 0
       let profit = 0
-      this.getItemsFromGroup.forEach((item) => {
+      this.tableItems.forEach((item) => {
         invested += parseFloat(item.totalInvested)
         profit += parseFloat(item.profit)
       })

@@ -166,6 +166,7 @@ export default new Vuex.Store({
         dispatch('refreshIdToken', refreshToken)
       }
 
+      console.log('tryAutoLogin', expirationDate)
       commit('AUTH_USER', { refreshToken, userId, token })
       commit('SET_LAYOUT', 'default')
     },
@@ -216,7 +217,10 @@ export default new Vuex.Store({
         })
         .catch((e) => console.error(e))
     },
-    getFinanceGroups({ commit }) {
+    getFinanceGroups({ commit, state }) {
+      // TODO: Wenn das nichts bringt, localStorage timer token validate überprüfen bevor request!
+      if (!state.userId) return []
+
       DataService.getGroups()
         .then((res) => {
           if (Object.keys(res.data).length) {
@@ -268,7 +272,9 @@ export default new Vuex.Store({
         })
         .catch((e) => console.error(e))
     },
-    getFinanceItems({ commit }) {
+    getFinanceItems({ commit, state }) {
+      if (!state.userId) return []
+
       DataService.getItems()
         .then((res) => {
           if (Object.keys(res.data).length) {
@@ -302,23 +308,49 @@ export default new Vuex.Store({
         })
       })
     },
-    realStockPrice({ state }, item) {
+    realStockPrice({ state }, items) {
       if (!state.forex || !state.forex.value) return 0
 
-      return FinanceService.quote(item.stockID)
-        .then((res) => {
-          const price = parseFloat(res.data.close)
-          const dif = parseFloat(state.forex.value)
-          let real_price = price.toFixed(2)
+      const stockIDs = []
+      items.forEach((item, i) => {
+        stockIDs[i] = item.stockID
+      })
 
-          if (item.market === 'US') {
+      return FinanceService.quote(stockIDs.join(','))
+        .then((res) => {
+          const { data } = res
+          let price = 0
+          const dif = parseFloat(state.forex.value)
+          let real_price = 0
+          const multipleData = []
+          if (items.length > 1) {
+            // multiple
+            Object.values(data).forEach((entry, i) => {
+              price = parseFloat(entry.close)
+              real_price = price.toFixed(2)
+              // TODO: check language and global currency in future!
+              if (items[i].market === 'US') {
+                real_price = parseFloat(price / dif).toFixed(2)
+              }
+              multipleData[i] = { ...entry, real_price: parseFloat(real_price) }
+            })
+          } else {
+            // single
+            price = parseFloat(data.close)
+            real_price = price.toFixed(2)
             // TODO: check language and global currency in future!
-            real_price = parseFloat(price / dif).toFixed(2)
+            if (items[0].market === 'US') {
+              real_price = parseFloat(price / dif).toFixed(2)
+            }
+
+            return {
+              ...data,
+              real_price: parseFloat(real_price),
+            }
           }
 
           return {
-            ...res.data,
-            real_price: parseFloat(real_price),
+            ...multipleData,
           }
         })
         .catch((e) => console.error(e))
@@ -382,6 +414,14 @@ export default new Vuex.Store({
       let value = 0
       getters.filteredGroups.forEach((invest) => {
         value += parseFloat(invest.currentValue)
+      })
+      return value
+    },
+    totalProfit: (_, getters) => {
+      if (!getters.filteredGroups) return 0
+      let value = 0
+      getters.filteredGroups.forEach((invest) => {
+        value += parseFloat(invest.profit)
       })
       return value
     },

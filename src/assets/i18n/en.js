@@ -46,8 +46,8 @@ export default {
   },
   sidebar: {
     headline: 'My Investment',
-    listView: 'list-view',
-    chartView: 'chart-view',
+    listView: 'Portfolio',
+    chartView: 'Asset distribution',
     examples: 'Examples',
     addGroup: 'Add Finance Group',
     addItem: 'Add Finance Item',
@@ -58,7 +58,7 @@ export default {
     headlines: {
       name: 'name',
       description: 'Description',
-      totalInvested: 'Total invested',
+      totalInvested: 'Invested',
       profit: 'Profit',
       actions: 'Actions',
       invested: 'Invested',

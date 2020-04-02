@@ -13,7 +13,7 @@
       </v-card-title>
       <v-data-table
         :headers="headers"
-        :items="getItemsFromGroup"
+        :items="tableItems"
         :items-per-page="10"
         hide-default-footer
         class="elevation-1"
@@ -31,6 +31,12 @@
             </v-icon>
             <TweenNumber :value="calculateProfit(item)" :formatPrice="false" />
             %
+            <span class="dashboard__table__profit__text">
+              (
+              <span v-if="Math.sign(parseFloat(item.profit)) !== -1">+</span>
+              <TweenNumber :value="item.profit" />
+              €)
+            </span>
           </span>
         </template>
         <template v-slot:item.actions="{ item }">
@@ -122,6 +128,12 @@ export default {
 
   &__profit {
     background: transparent;
+
+    &__text {
+      display: block;
+      padding-left: 5px;
+      font-size: 12px;
+    }
   }
 
   .v-icon {
