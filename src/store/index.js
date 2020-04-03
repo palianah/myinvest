@@ -166,7 +166,6 @@ export default new Vuex.Store({
         dispatch('refreshIdToken', refreshToken)
       }
 
-      console.log('tryAutoLogin', expirationDate)
       commit('AUTH_USER', { refreshToken, userId, token })
       commit('SET_LAYOUT', 'default')
     },
@@ -217,20 +216,26 @@ export default new Vuex.Store({
         })
         .catch((e) => console.error(e))
     },
-    getFinanceGroups({ commit, state }) {
-      // TODO: Wenn das nichts bringt, localStorage timer token validate überprüfen bevor request!
+    getFinanceGroups({ commit, state, dispatch }) {
       if (!state.userId) return []
 
-      DataService.getGroups()
-        .then((res) => {
-          if (Object.keys(res.data).length) {
-            commit('SHOW_TOUR', false)
-            commit('ADD_FINANCE_GROUP', { ...res.data, multiple: true })
-          } else {
-            commit('SHOW_TOUR', true)
-          }
-        })
-        .catch((e) => console.error(e))
+      // check expireDate if expired, refresh token!
+      const refreshToken = localStorage.getItem('refreshToken')
+      const expirationDate = Date.parse(localStorage.getItem('expirationDate'))
+      if (new Date().getTime() >= expirationDate) {
+        dispatch('refreshIdToken', refreshToken)
+      } else {
+        DataService.getGroups()
+          .then((res) => {
+            if (Object.keys(res.data).length) {
+              commit('SHOW_TOUR', false)
+              commit('ADD_FINANCE_GROUP', { ...res.data, multiple: true })
+            } else {
+              commit('SHOW_TOUR', true)
+            }
+          })
+          .catch((e) => console.error(e))
+      }
     },
     deleteFinanceGroup({ state, dispatch, commit }, item) {
       DataService.deleteGroup(item.key)
@@ -272,16 +277,23 @@ export default new Vuex.Store({
         })
         .catch((e) => console.error(e))
     },
-    getFinanceItems({ commit, state }) {
+    getFinanceItems({ commit, state, dispatch }) {
       if (!state.userId) return []
 
-      DataService.getItems()
-        .then((res) => {
-          if (Object.keys(res.data).length) {
-            commit('ADD_FINANCE_ITEM', { ...res.data, multiple: true })
-          }
-        })
-        .catch((e) => console.error(e))
+      // check expireDate if expired, refresh token!
+      const refreshToken = localStorage.getItem('refreshToken')
+      const expirationDate = Date.parse(localStorage.getItem('expirationDate'))
+      if (new Date().getTime() >= expirationDate) {
+        dispatch('refreshIdToken', refreshToken)
+      } else {
+        DataService.getItems()
+          .then((res) => {
+            if (Object.keys(res.data).length) {
+              commit('ADD_FINANCE_ITEM', { ...res.data, multiple: true })
+            }
+          })
+          .catch((e) => console.error(e))
+      }
     },
     buyFinanceItem({ state, commit }, formData) {
       DataService.buyItem({
@@ -357,14 +369,11 @@ export default new Vuex.Store({
     },
   },
   getters: {
-    groupNames: (state) => {
-      if (!state.financeGroups) return []
-      // sort highest val to lowest
-      const sortedGroups = state.financeGroups.sort(
-        (a, b) => b.currentValue - a.currentValue
-      )
+    groupNames: (state, getters) => {
+      if (!state.financeGroups.length || !getters.sortedGroups.length) return []
+
       const groupNames = []
-      sortedGroups.forEach((group, index) => {
+      getters.sortedGroups.forEach((group, index) => {
         groupNames[index] = group.title
       })
       return groupNames
@@ -385,15 +394,19 @@ export default new Vuex.Store({
         const value = ((parseFloat(item.currentValue) / total) * 100).toFixed(2)
         groupValues[index] = parseFloat(value)
       })
-
       // sort highest to lowest
       return groupValues.sort((a, b) => b - a)
     },
-    // adds to the finance groups the totalInvested and current value and profit properties
-    filteredGroups: (state) => {
+    sortedGroups: (state) => {
       if (!state.financeGroups.length) return []
+      // sort highest val to lowest
+      return state.financeGroups.sort((a, b) => b.currentValue - a.currentValue)
+    },
+    // adds to the finance groups the totalInvested and current value and profit properties
+    filteredGroups: (state, getters) => {
+      if (!state.financeGroups.length || !getters.sortedGroups.length) return []
 
-      return state.financeGroups.filter((group) => {
+      return getters.sortedGroups.filter((group) => {
         const expos = filter(state.financeItems, { exposition: group.title })
         let totalInvested = 0
         let currentValue = 0

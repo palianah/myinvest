@@ -16,6 +16,7 @@
         :items="tableItems"
         :items-per-page="10"
         hide-default-footer
+        :mobile-breakpoint="768"
         class="elevation-1"
       >
         <template v-slot:item.totalInvested="{ item }">

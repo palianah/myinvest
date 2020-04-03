@@ -16,6 +16,7 @@
         :items="tableItems"
         :items-per-page="10"
         hide-default-footer
+        :mobile-breakpoint="768"
         class="elevation-1"
       >
         <template v-slot:item.totalInvested="{ item }">
@@ -101,6 +102,7 @@ export default {
         {
           text: this.$vuetify.lang.t('$vuetify.table.headlines.availableValue'),
           value: 'totalInvested',
+          sortable: false,
         },
         {
           text: this.$vuetify.lang.t('$vuetify.table.headlines.currentValue'),
@@ -109,6 +111,7 @@ export default {
         {
           text: this.$vuetify.lang.t('$vuetify.table.headlines.profit'),
           value: 'profit',
+          sortable: false,
         },
         {
           text: this.$vuetify.lang.t('$vuetify.table.headlines.actions'),

@@ -1,8 +1,8 @@
 <template>
-  <div class="dashboard px-5">
+  <div class="dashboard px-5 pt-3">
     <FinanceGroupTable />
 
-    <div v-for="group in financeGroups" :key="group.title">
+    <div v-for="group in sortedGroups" :key="group.title">
       <component
         v-bind:is="itemComponent(group.title)"
         :title="group.title"
@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import FinanceGroupTable from '@/components/tables/FinanceGroupTable'
 import FinanceItemTable from '@/components/tables/FinanceItemTable'
 import FinanceItemTableStock from '@/components/tables/FinanceItemTableStock'
@@ -21,7 +21,11 @@ import FinanceItemTableCash from '@/components/tables/FinanceItemTableCash'
 
 export default {
   computed: {
-    ...mapState(['financeGroups', 'forex']),
+    ...mapState(['forex']),
+    ...mapGetters(['sortedGroups']),
+    hasFinanceData() {
+      return this.sortedGroups.length
+    },
   },
   methods: {
     itemComponent(title) {

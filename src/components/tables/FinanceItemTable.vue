@@ -16,6 +16,7 @@
         :items="tableItems"
         :items-per-page="10"
         hide-default-footer
+        :mobile-breakpoint="768"
         class="elevation-1"
       >
         <template v-slot:item.totalInvested="{ item }">
@@ -109,7 +110,19 @@ export default {
 </script>
 
 <style lang="less">
+@import '../../assets/less/structure.less';
+
 .dashboard__table {
+  // overwrite data-table
+  .v-data-table__mobile-row {
+    min-height: 35px;
+    font-size: 13px;
+  }
+
+  .v-label {
+    font-size: 12px;
+  }
+
   .c-red {
     color: red;
   }
@@ -124,6 +137,11 @@ export default {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    font-size: 16px;
+
+    @media @tablet {
+      font-size: 20px;
+    }
   }
 
   &__profit {

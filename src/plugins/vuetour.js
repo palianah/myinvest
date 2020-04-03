@@ -3,3 +3,5 @@ import VueTour from 'vue-tour'
 require('vue-tour/dist/vue-tour.css')
 
 Vue.use(VueTour)
+
+export default VueTour

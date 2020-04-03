@@ -1,45 +1,53 @@
 <template>
   <div class="custom-linebar">
-    <ul class="custom-linebar__list">
-      <li
-        class="custom-linebar__list__item"
-        v-for="(item, index) in sortedItemsByPrice"
-        :key="item.key"
-        :style="{
-          width: itemPercent(item.currentValue),
-          backgroundColor: itemBg(index),
-        }"
-        :title="item.title"
-      ></li>
-    </ul>
-    <div class="custom-linebar__details">
-      <div
-        class="custom-linebar__details__item"
-        v-for="(item, index) in sortedItemsByPrice"
-        :key="item.key"
-      >
-        <span
-          class="custom-linebar__details__bg"
-          :style="{ backgroundColor: itemBg(index) }"
-        ></span>
-        <span class="custom-linebar__details__text"> {{ item.title }}</span>
-        <span class="custom-linebar__details__text">
-          ({{ item.exposition }})
-        </span>
-        <span class="custom-linebar__details__text align-right">
-          {{ itemPercent(item.currentValue) }}</span
-        >
+    <div v-if="!isLoading">
+      <div v-if="sortedItemsByPrice.length">
+        <ul class="custom-linebar__list">
+          <li
+            class="custom-linebar__list__item"
+            v-for="(item, index) in sortedItemsByPrice"
+            :key="item.key"
+            :style="{
+              width: itemPercent(item.currentValue),
+              backgroundColor: itemBg(index),
+            }"
+            :title="item.title"
+          ></li>
+        </ul>
+        <div class="custom-linebar__details">
+          <div
+            class="custom-linebar__details__item"
+            v-for="(item, index) in sortedItemsByPrice"
+            :key="item.key"
+          >
+            <span
+              class="custom-linebar__details__bg"
+              :style="{ backgroundColor: itemBg(index) }"
+            ></span>
+            <span class="custom-linebar__details__text"> {{ item.title }}</span>
+            <span class="custom-linebar__details__text">
+              ({{ item.exposition }})
+            </span>
+            <span class="custom-linebar__details__text align-right">
+              {{ itemPercent(item.currentValue) }}</span
+            >
+          </div>
+        </div>
+      </div>
+      <div v-else>
+        <i>{{ $vuetify.lang.t('$vuetify.chart.noItems') }}</i>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   data() {
     return {
+      isLoading: true,
       bgList: [
         '#11cdef',
         '#2dce89',
@@ -66,6 +74,11 @@ export default {
       ],
     }
   },
+  watch: {
+    showTour() {
+      this.isLoading = false
+    },
+  },
   methods: {
     itemPercent(currentValue) {
       const item = parseFloat(currentValue)
@@ -78,7 +91,13 @@ export default {
     },
   },
   computed: {
+    ...mapState(['showTour']),
     ...mapGetters(['totalCapitalAsset', 'sortedItemsByPrice']),
+  },
+  mounted() {
+    if (this.showTour !== null) {
+      this.isLoading = false
+    }
   },
 }
 </script>

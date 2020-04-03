@@ -14,12 +14,8 @@ export default {
       default: null,
     },
   },
-  data: () => ({
-    htmlLegend: null,
-  }),
   mounted() {
     this.renderChart(this.chartData, this.options)
-    this.htmlLegend = this.generateLegend()
   },
 }
 </script>

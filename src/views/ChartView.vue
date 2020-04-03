@@ -6,7 +6,7 @@
           <v-card-text class="dashboard__card__headline pa-0 pb-3">
             {{ $vuetify.lang.t('$vuetify.chart.capitalRationHeadline') }}
           </v-card-text>
-          <div class="dashboard__chart">
+          <div class="dashboard__chart" v-if="!isLoading">
             <DoghnutChart
               class="dashboard__chart__doghnut"
               v-if="groupValuesLoaded"
@@ -34,6 +34,9 @@
                 </span>
               </li>
             </ul>
+            <p v-else>
+              <i>{{ $vuetify.lang.t('$vuetify.chart.noGroup') }}</i>
+            </p>
           </div>
         </v-card>
       </v-col>
@@ -59,6 +62,7 @@ import CustomLineBar from '@/components/charts/CustomLineBar'
 export default {
   data() {
     return {
+      isLoading: true,
       groupLegend: null,
       groupPercentData: null,
       percentOptions: {
@@ -100,6 +104,9 @@ export default {
           this.groupValuesLoaded = false
         }
       },
+    },
+    showTour() {
+      this.isLoading = false
     },
   },
   methods: {
@@ -157,8 +164,9 @@ export default {
       }
     },
   },
+
   computed: {
-    ...mapState(['financeGroups', 'financeItems']),
+    ...mapState(['financeGroups', 'financeItems', 'showTour']),
     ...mapGetters(['groupNames', 'groupPercentValues']),
   },
   components: {
@@ -169,6 +177,8 @@ export default {
 </script>
 
 <style lang="less">
+@import '../assets/less/structure.less';
+
 .dashboard {
   &__card__headline {
     font-size: 20px;
@@ -177,26 +187,36 @@ export default {
   }
 
   &__chart {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    @media @tablet {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
 
     &__doghnut {
-      margin: 0 20px 0 0;
-      width: 50%;
+      margin: 0;
       max-width: 350px;
-      flex: 1 0 50%;
+
+      @media @tablet {
+        margin: 0 20px 0 0;
+        width: 50%;
+        flex: 1 0 50%;
+      }
     }
 
     &__legend {
-      flex: 1 0 40%;
       list-style: none;
+      padding: 20px 0 0 20px;
       margin: 0;
-      padding: 0;
-      width: 40%;
       display: flex;
       flex-flow: column;
       justify-content: center;
+
+      @media @tablet {
+        padding: 0;
+        flex: 1 0 40%;
+        width: 40%;
+      }
 
       &__item {
         font-size: 15px;

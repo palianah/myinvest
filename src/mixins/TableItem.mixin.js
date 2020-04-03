@@ -17,6 +17,7 @@ const tableItem = {
         {
           text: this.$vuetify.lang.t('$vuetify.table.headlines.totalInvested'),
           value: 'totalInvested',
+          sortable: false,
         },
         {
           text: this.$vuetify.lang.t('$vuetify.table.headlines.currentValue'),
@@ -25,6 +26,7 @@ const tableItem = {
         {
           text: this.$vuetify.lang.t('$vuetify.table.headlines.profit'),
           value: 'profit',
+          sortable: false,
         },
         {
           text: this.$vuetify.lang.t('$vuetify.table.headlines.actions'),

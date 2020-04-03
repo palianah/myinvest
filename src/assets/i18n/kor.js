@@ -76,6 +76,8 @@ export default {
   chart: {
     capitalRationHeadline: '자산분배 비율',
     customLineBarHeadline: '종목별 정보',
+    noGroup: '아직 자산 그룹을 추가하지 않으셨습니다.',
+    noItems: '아직 자산 아이템이 없습니다.',
   },
   forms: {
     addGroupTitle: '자산 그룹 추가',

@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard__table" v-if="filteredGroups.length">
+  <div class="dashboard__table">
     <v-card>
       <v-card-title class="dashboard__table__title">
         <div>{{ $vuetify.lang.t('$vuetify.table.tableGroupHeadline') }}</div>
@@ -17,6 +17,7 @@
         :items="filteredGroups"
         :items-per-page="10"
         hide-default-footer
+        :mobile-breakpoint="768"
         class="elevation-1"
       >
         <template v-slot:item.totalInvested="{ item }">
@@ -117,10 +118,12 @@ export default {
           text: this.$vuetify.lang.t('$vuetify.table.headlines.description'),
           value: 'description',
           width: '300',
+          sortable: false,
         },
         {
           text: this.$vuetify.lang.t('$vuetify.table.headlines.totalInvested'),
           value: 'totalInvested',
+          sortable: false,
         },
         {
           text: this.$vuetify.lang.t('$vuetify.table.headlines.profit'),

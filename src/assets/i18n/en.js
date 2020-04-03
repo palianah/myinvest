@@ -56,7 +56,7 @@ export default {
   table: {
     tableGroupHeadline: 'My Portfolio',
     headlines: {
-      name: 'name',
+      name: 'Name',
       description: 'Description',
       totalInvested: 'Invested',
       profit: 'Profit',
@@ -75,6 +75,8 @@ export default {
   chart: {
     capitalRationHeadline: 'Capital Ratio in Percent',
     customLineBarHeadline: 'Listed by Items',
+    noGroup: 'No Capital Group added yet.',
+    noItems: 'No Items available. Add some Items!',
   },
   forms: {
     addGroupTitle: 'Add Group',

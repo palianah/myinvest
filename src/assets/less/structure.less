@@ -1,0 +1,12 @@
+@screen-xs: 450px;
+@screen-sm: 768px;
+@screen-tablet: 1024px;
+@screen-between-fhd-and-tablet: 1600px;
+@screen-fhd: 1910px; // 1920px
+
+// Media query names like how we talk in the project
+@mobile: ~'only screen and (max-width: @{screen-xs})'; // Don't use this if you're using other sizes too, because Mobile First should be the default.
+@tablet: ~'only screen and (min-width: @{screen-sm})';
+@tabletLandscape: ~'only screen and (min-width: @{screen-tablet})';
+@desktop: ~'only screen and (min-width: @{screen-between-fhd-and-tablet})';
+@fhd: ~'only screen and (min-width: @{screen-fhd})';
