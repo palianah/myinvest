@@ -164,9 +164,9 @@ export default new Vuex.Store({
       const expirationDate = Date.parse(localStorage.getItem('expirationDate'))
       if (new Date().getTime() >= expirationDate) {
         dispatch('refreshIdToken', refreshToken)
+      } else {
+        commit('AUTH_USER', { refreshToken, userId, token })
       }
-
-      commit('AUTH_USER', { refreshToken, userId, token })
       commit('SET_LAYOUT', 'default')
     },
     logout({ commit }) {
@@ -174,12 +174,14 @@ export default new Vuex.Store({
       commit('SET_LAYOUT', 'landing')
       router.replace({ name: 'login' })
     },
-    refreshIdToken({ state, commit }, refreshToken) {
+    refreshIdToken({ commit }, refreshToken) {
+      const userId = localStorage.getItem('userId')
+
       AuthService.refreshIdToken(refreshToken)
         .then((res) => {
           commit('AUTH_USER', {
-            refreshToken: state.refreshToken,
-            userId: state.userId,
+            refreshToken,
+            userId,
             token: res.data.id_token,
           })
 
@@ -216,14 +218,11 @@ export default new Vuex.Store({
         })
         .catch((e) => console.error(e))
     },
-    getFinanceGroups({ commit, state, dispatch }) {
+    getFinanceGroups({ commit, state }) {
       if (!state.userId) return []
-
-      // check expireDate if expired, refresh token!
-      const refreshToken = localStorage.getItem('refreshToken')
       const expirationDate = Date.parse(localStorage.getItem('expirationDate'))
       if (new Date().getTime() >= expirationDate) {
-        dispatch('refreshIdToken', refreshToken)
+        location.reload()
       } else {
         DataService.getGroups()
           .then((res) => {
@@ -277,14 +276,13 @@ export default new Vuex.Store({
         })
         .catch((e) => console.error(e))
     },
-    getFinanceItems({ commit, state, dispatch }) {
+    getFinanceItems({ commit, state }) {
       if (!state.userId) return []
 
       // check expireDate if expired, refresh token!
-      const refreshToken = localStorage.getItem('refreshToken')
       const expirationDate = Date.parse(localStorage.getItem('expirationDate'))
       if (new Date().getTime() >= expirationDate) {
-        dispatch('refreshIdToken', refreshToken)
+        return
       } else {
         DataService.getItems()
           .then((res) => {

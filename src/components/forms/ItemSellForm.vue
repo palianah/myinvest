@@ -42,7 +42,6 @@ export default {
       type: [Array, Object, String],
       required: true,
     },
-    editMode: Boolean,
   },
   data() {
     return {
@@ -58,7 +57,9 @@ export default {
       ],
       formData: {
         amount: this.formProps.amount ? this.formProps.amount : '',
-        averageStockPrice: '',
+        averageStockPrice: this.formProps.real_price
+          ? this.formProps.real_price
+          : '',
       },
     }
   },

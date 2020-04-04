@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import LandingPage from '@/views/LandingPage'
 import Login from '@/views/Login'
 import Register from '@/views/Register'
 import Dashboard from '@/views/Dashboard'
 import ChartView from '@/views/ChartView'
 import Examples from '@/views/Examples'
+// import LandingPage from '@/views/LandingPage'
 
 Vue.use(VueRouter)
 
@@ -24,13 +24,13 @@ const routes = [
   {
     path: '/:lang',
     name: 'home',
-    component: LandingPage,
     beforeEnter: (to, from, next) => {
       if (localStorage.getItem('token')) {
         next({ name: 'dashboard' })
         return
+      } else {
+        next({ name: 'login', params: { lang: 'en' } })
       }
-      next()
     },
   },
   {

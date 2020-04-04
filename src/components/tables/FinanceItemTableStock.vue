@@ -207,14 +207,34 @@ export default {
   },
   methods: {
     buyItem(item) {
+      let real_price = ''
+      if (
+        this.stockData[item.stockID] &&
+        'real_price' in this.stockData[item.stockID]
+      ) {
+        real_price = this.stockData[item.stockID].real_price
+      }
       this.formOpen = true
       this.modalComponent = 'item-add'
-      this.modalItem = item
+      this.modalItem = {
+        ...item,
+        real_price,
+      }
     },
     sellItem(item) {
+      let real_price = ''
+      if (
+        this.stockData[item.stockID] &&
+        'real_price' in this.stockData[item.stockID]
+      ) {
+        real_price = this.stockData[item.stockID].real_price
+      }
       this.formOpen = true
       this.modalComponent = 'item-extract'
-      this.modalItem = item
+      this.modalItem = {
+        ...item,
+        real_price,
+      }
     },
     stockDataPercent(percent) {
       let res = parseFloat(parseFloat(percent).toFixed(2))

@@ -164,7 +164,11 @@ export default {
       }
     },
   },
-
+  mounted() {
+    if (this.showTour !== null) {
+      this.isLoading = false
+    }
+  },
   computed: {
     ...mapState(['financeGroups', 'financeItems', 'showTour']),
     ...mapGetters(['groupNames', 'groupPercentValues']),

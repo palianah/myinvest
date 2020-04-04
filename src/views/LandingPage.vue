@@ -1,8 +1,8 @@
 <template>
   <div class="landing">
-    <h1>
-      {{ $vuetify.lang.t('$vuetify.landingPage.headline') }}
-    </h1>
+    <router-link :to="{ name: 'login' }">Login</router-link>
+    <br />
+    <router-link :to="{ name: 'register' }">Register</router-link>
   </div>
 </template>
 
