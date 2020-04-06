@@ -67,8 +67,9 @@ export default {
     saveItem() {
       if (this.validate()) {
         const newData = this.calculateValues()
-
-        // TODO: dispatch statt commit
+        // ist korrekt, aber wegen real_stock_price stimmt es nicht überein beim reload!
+        // profit nicht mit aktuellen Form angegebenen Preis, sondern real_price berechnen!
+        // console.log('newData: ', newData)
         this.$store.dispatch('updateFinanceItem', {
           ...this.formProps,
           ...newData,
@@ -96,6 +97,7 @@ export default {
         amount,
       }
     },
+    // TODO: Bug calculating profit!
     calculateCurrentValue(formAmount, propsStockPrice) {
       const formStockPrice = parseFloat(this.formData.averageStockPrice)
       const propsCurrent = parseFloat(this.formProps.currentValue)

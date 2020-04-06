@@ -60,7 +60,9 @@ export default {
     saveItem() {
       if (this.validate()) {
         const newData = this.calculateValues()
-
+        // ist korrekt, aber wegen real_stock_price stimmt es nicht überein beim reload!
+        // profit nicht mit aktuellen Form angegebenen Preis, sondern real_price berechnen!
+        // console.log('newData: ', newData)
         this.$store.dispatch('updateFinanceItem', {
           ...this.formProps,
           ...newData,

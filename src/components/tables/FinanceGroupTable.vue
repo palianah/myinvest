@@ -1,61 +1,47 @@
 <template>
   <div class="dashboard__table">
-    <v-card>
-      <v-card-title class="dashboard__table__title">
-        <div>{{ $vuetify.lang.t('$vuetify.table.tableGroupHeadline') }}</div>
-        <div>
-          <v-icon
-            :title="$vuetify.lang.t('$vuetify.sidebar.addGroup')"
-            @click="addGroup"
-            >mdi-pencil-plus</v-icon
-          >
-        </div>
-      </v-card-title>
-      <v-data-table
-        v-model="selected"
-        :headers="headers"
-        :items="filteredGroups"
-        :items-per-page="10"
-        hide-default-footer
-        :mobile-breakpoint="768"
-        class="elevation-1"
-      >
-        <template v-slot:item.totalInvested="{ item }">
-          <TweenNumber :value="item.totalInvested" />
-          €
-        </template>
-        <template v-slot:item.profit="{ item }">
-          <span class="dashboard__table__profit" :class="getColor(item.profit)">
-            <v-icon class="dashboard__table__arrow">
-              mdi-{{ getIcon(item.profit) }}
-            </v-icon>
-            <TweenNumber :value="calculateProfit(item)" :formatPrice="false" />
-            %
-            <span class="dashboard__table__profit__text">
-              (
-              <span v-if="Math.sign(item.profit) !== -1">+</span>
-              <TweenNumber :value="item.profit" />
-              €)
-            </span>
-          </span>
-        </template>
-        <template v-slot:item.actions="{ item }">
-          <v-icon @click.stop="editGroup(item)" :title="item.actions"
-            >mdi-pencil</v-icon
-          >
-          <v-icon @click.stop="deleteGroup(item)" :title="item.actions"
-            >mdi-delete</v-icon
-          >
-        </template>
-        <template v-slot:footer>
-          <div class="dashboard__table__footer">
-            <div class="dashboard__table__footer__item">
-              {{ $vuetify.lang.t('$vuetify.table.footer.total') }}:
+    <v-row cols="12">
+      <v-col cols="12" md="4">
+        <v-card class="dashboard__table__card">
+          <v-card-title class="dashboard__table__card-title">
+            <div>
+              {{ $vuetify.lang.t('$vuetify.table.tableGroupHeadline') }}
+            </div>
+            <div class="dashboard__table__card-price">
               <b><TweenNumber :value="totalCapitalAsset" /> €</b>
             </div>
-            <div class="dashboard__table__footer__item">
+          </v-card-title>
+          <v-card-text>
+            <div class="dashboard__table__card-text">
+              <span class="dashboard__table__card-text__headline">
+                {{ $vuetify.lang.t('$vuetify.table.headlines.totalInvested') }}
+              </span>
+              <span class="dashboard__table__card-text__value pl-2">
+                <b><TweenNumber :value="totalInvested" /> €</b>
+              </span>
+            </div>
+            <div class="dashboard__table__card-text">
+              <span class="dashboard__table__card-text__headline">
+                {{ $vuetify.lang.t('$vuetify.table.totalGroups') }}
+              </span>
+              <span class="dashboard__table__card-text__value pl-2">
+                {{ filteredGroups.length }}
+              </span>
+            </div>
+            <div class="dashboard__table__card-text">
+              <span class="dashboard__table__card-text__headline">
+                {{ $vuetify.lang.t('$vuetify.table.totalItems') }}
+              </span>
+              <span class="dashboard__table__card-text__value pl-2">
+                {{ financeItems.length }}
+              </span>
+            </div>
+            <div class="dashboard__table__card-text">
+              <span class="dashboard__table__card-text__headline">
+                {{ $vuetify.lang.t('$vuetify.table.headlines.profit') }}:
+              </span>
               <span
-                class="pl-2"
+                class="dashboard__table__card-text__value pl-2"
                 :class="{
                   'c-red': calculateTotalProfit < 0,
                   'c-green': calculateTotalProfit > 0,
@@ -67,17 +53,74 @@
                 </v-icon>
                 <TweenNumber :value="calculateTotalProfit" /> %
                 <span class="dashboard__table__profit__text">
-                  (
                   <span v-if="Math.sign(totalProfit) !== -1">+</span>
                   <TweenNumber :value="totalProfit" />
-                  €)
+                  €
                 </span>
               </span>
             </div>
-          </div>
-        </template>
-      </v-data-table>
-    </v-card>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="12" md="8">
+        <v-card style="height: 100%;">
+          <v-card-title class="dashboard__table__title">
+            <div>
+              {{ $vuetify.lang.t('$vuetify.table.tableAllGroupsHeadline') }}
+            </div>
+            <div>
+              <v-icon
+                :title="$vuetify.lang.t('$vuetify.sidebar.addGroup')"
+                @click.stop="addGroup"
+                >mdi-pencil-plus</v-icon
+              >
+            </div>
+          </v-card-title>
+          <v-data-table
+            v-model="selected"
+            :headers="headers"
+            :items="filteredGroups"
+            :items-per-page="10"
+            hide-default-footer
+            :mobile-breakpoint="768"
+          >
+            <template v-slot:item.totalInvested="{ item }">
+              <TweenNumber :value="item.totalInvested" />
+              €
+            </template>
+            <template v-slot:item.profit="{ item }">
+              <span
+                class="dashboard__table__profit"
+                :class="getColor(item.profit)"
+              >
+                <v-icon class="dashboard__table__arrow">
+                  mdi-{{ getIcon(item.profit) }}
+                </v-icon>
+                <TweenNumber
+                  :value="calculateProfit(item)"
+                  :formatPrice="false"
+                />
+                %
+                <span class="dashboard__table__profit__text">
+                  (
+                  <span v-if="Math.sign(item.profit) !== -1">+</span>
+                  <TweenNumber :value="item.profit" />
+                  €)
+                </span>
+              </span>
+            </template>
+            <template v-slot:item.actions="{ item }">
+              <v-icon @click.stop="editGroup(item)" :title="item.actions"
+                >mdi-pencil</v-icon
+              >
+              <v-icon @click.stop="deleteGroup(item)" :title="item.actions"
+                >mdi-delete</v-icon
+              >
+            </template>
+          </v-data-table>
+        </v-card>
+      </v-col>
+    </v-row>
 
     <FormDialog
       :formOpen="formOpen"
@@ -95,7 +138,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import FormDialog from '@/components/dialog/FormDialog'
 import ConfirmDialog from '@/components/dialog/ConfirmDialog'
 import TweenNumber from '@/components/TweenNumber'
@@ -113,12 +156,6 @@ export default {
         {
           text: this.$vuetify.lang.t('$vuetify.table.headlines.name'),
           value: 'title',
-        },
-        {
-          text: this.$vuetify.lang.t('$vuetify.table.headlines.description'),
-          value: 'description',
-          width: '300',
-          sortable: false,
         },
         {
           text: this.$vuetify.lang.t('$vuetify.table.headlines.totalInvested'),
@@ -190,7 +227,13 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['filteredGroups', 'totalCapitalAsset', 'totalProfit']),
+    ...mapState(['financeItems']),
+    ...mapGetters([
+      'filteredGroups',
+      'totalCapitalAsset',
+      'totalProfit',
+      'totalInvested',
+    ]),
     calculateTotalProfit() {
       let invested = 0
       let profit = 0

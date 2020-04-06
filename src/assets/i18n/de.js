@@ -54,11 +54,14 @@ export default {
     logout: 'Abmelden',
   },
   table: {
-    tableGroupHeadline: 'My Portfolio',
+    tableGroupHeadline: 'Kontostand',
+    tableAllGroupsHeadline: 'Alle Gruppen',
+    totalGroups: 'Total Groups',
+    totalItems: 'Total Items',
     headlines: {
       name: 'Name',
       description: 'Description',
-      totalInvested: 'Invested',
+      totalInvested: 'Total Invested',
       profit: 'Profit',
       actions: 'Actions',
       invested: 'Invested',
@@ -73,7 +76,7 @@ export default {
     },
   },
   chart: {
-    capitalRationHeadline: 'Capital Ratio in Percent',
+    capitalRationHeadline: 'Vermögensverteilung in Prozent',
     customLineBarHeadline: 'Listed by Items',
     noGroup: 'No Capital Group added yet.',
     noItems: 'No Items available. Add some Items!',

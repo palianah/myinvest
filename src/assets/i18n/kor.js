@@ -55,11 +55,14 @@ export default {
     logout: '로그아웃',
   },
   table: {
-    tableGroupHeadline: '내 포트폴리오',
+    tableGroupHeadline: '계정 잔액',
+    tableAllGroupsHeadline: '모든 자산그룹',
+    totalGroups: '자산 그룹',
+    totalItems: '자산 아이템',
     headlines: {
       name: '이름',
       description: '설명',
-      totalInvested: '투자금액',
+      totalInvested: '총 투자금액',
       profit: '이익',
       actions: 'Actions',
       invested: '투자금액',

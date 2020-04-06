@@ -26,22 +26,27 @@
       <v-text-field
         v-model="formData.stockID"
         :label="$vuetify.lang.t('$vuetify.forms.quotes')"
+        @change="onQuotesChange"
       ></v-text-field>
       <v-text-field
         type="number"
-        v-model="formData.amount"
+        v-model.lazy="formData.amount"
+        @change="calulateTotalInvestedValue"
         :label="$vuetify.lang.t('$vuetify.forms.amount')"
       ></v-text-field>
       <v-text-field
         type="number"
         v-model="formData.averageStockPrice"
         :label="$vuetify.lang.t('$vuetify.forms.averageStockPrice')"
+        @change="calulateTotalInvestedValue"
+        ref="averageStockPrice"
       ></v-text-field>
     </template>
 
     <v-text-field
       type="number"
       v-model="formData.totalInvested"
+      ref="totalInvested"
       :label="$vuetify.lang.t('$vuetify.forms.totalInvestedValue')"
     ></v-text-field>
 
@@ -65,7 +70,9 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
+import FinanceService from '@/services/finance.service'
+
 export default {
   props: {
     formProps: {
@@ -81,7 +88,7 @@ export default {
     return {
       valid: true,
       showStockFormData: false,
-      markets: ['US', 'DE', 'KOR'],
+      markets: ['US', 'DE'],
       emptyRule: [
         (v) => !!v || this.$vuetify.lang.t('$vuetify.forms.fieldRequired'),
       ],
@@ -103,7 +110,12 @@ export default {
       immediate: true,
       handler(val) {
         if (!val) return
-        if (val.toLowerCase() === 'etf' || val.toLowerCase() === 'stock') {
+        if (
+          val.toLowerCase().includes('etf') ||
+          val.toLowerCase().includes('stock') ||
+          val.toLowerCase().includes('crypto') ||
+          val.toLowerCase().includes('krypto')
+        ) {
           this.showStockFormData = true
         } else {
           this.showStockFormData = false
@@ -131,11 +143,50 @@ export default {
         this.$emit('close')
       }
     },
+    onQuotesChange(val) {
+      this.formData.averageStockPrice = 20
+      FinanceService.quote(val).then((res) => {
+        const { data } = res
+        let price = 0
+        const dif = parseFloat(this.forex.value)
+        let real_price = 0
+        price = parseFloat(data.close)
+        real_price = price.toFixed(2)
+        if (this.formData.market === 'US') {
+          real_price = parseFloat(price / dif).toFixed(2)
+        }
+        this.formData.averageStockPrice = real_price
+        this.$refs.averageStockPrice.value = real_price // vuetify text-field bug, vue-warning!
+      })
+    },
+    calulateTotalInvestedValue() {
+      if (this.formData.amount && this.formData.averageStockPrice) {
+        const calc =
+          parseFloat(this.formData.amount) *
+          parseFloat(this.formData.averageStockPrice)
+        this.formData.totalInvested = parseFloat(calc.toFixed(2))
+        this.$refs.totalInvested.value = parseFloat(calc.toFixed(2)) // vuetify text-field bug, vue-warning!
+        if (this.formData.currentValue) {
+          this.calulateCurrentValue()
+        }
+      }
+    },
+    calulateCurrentValue() {
+      // differenz amount * averageStockPrice + this.formData.currentValue
+      // const calc = parseFloat(this.formProps.amount) - parseFloat(this.)
+      // console.log(
+      //   'propsAmount|amount|currentValue: ',
+      //   this.formProps.amount,
+      //   this.formData.amount,
+      //   this.formData.currentValue
+      // )
+    },
     validate() {
       return this.$refs.form.validate()
     },
   },
   computed: {
+    ...mapState(['forex']),
     ...mapGetters(['groupNames']),
   },
 }

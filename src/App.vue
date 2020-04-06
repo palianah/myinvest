@@ -13,13 +13,18 @@ import Footer from './components/Footer'
 export default {
   name: 'App',
   computed: {
-    ...mapState(['layout', 'userId']),
+    ...mapState(['layout', 'userId', 'financeItems', 'forex']),
   },
   watch: {
     userId(userId) {
       if (userId) {
         this.$store.dispatch('getFinanceGroups')
         this.$store.dispatch('getFinanceItems')
+      }
+    },
+    financeItems(items) {
+      if (items && items.length && !Object.values(this.forex).length) {
+        this.$store.dispatch('convertExchange', 'EUR/USD')
       }
     },
   },

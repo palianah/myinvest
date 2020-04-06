@@ -311,12 +311,14 @@ export default new Vuex.Store({
         .catch((e) => console.error(e))
     },
     convertExchange({ commit }, symbol) {
-      FinanceService.forex(symbol).then((res) => {
-        commit('UPDATE_FOREX', {
-          key: symbol,
-          value: parseFloat(res.data.price),
+      FinanceService.forex(symbol)
+        .then((res) => {
+          commit('UPDATE_FOREX', {
+            key: symbol,
+            value: parseFloat(res.data.price),
+          })
         })
-      })
+        .catch((e) => console.error('convertExchange error: ', e))
     },
     realStockPrice({ state }, items) {
       if (!state.forex || !state.forex.value) return 0
@@ -363,7 +365,7 @@ export default new Vuex.Store({
             ...multipleData,
           }
         })
-        .catch((e) => console.error(e))
+        .catch((e) => console.error('realStockPrice: ', e))
     },
   },
   getters: {
@@ -425,6 +427,14 @@ export default new Vuex.Store({
       let value = 0
       getters.filteredGroups.forEach((invest) => {
         value += parseFloat(invest.currentValue)
+      })
+      return value
+    },
+    totalInvested: (_, getters) => {
+      if (!getters.filteredGroups) return 0
+      let value = 0
+      getters.filteredGroups.forEach((invest) => {
+        value += parseFloat(invest.totalInvested)
       })
       return value
     },

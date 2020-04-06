@@ -191,38 +191,42 @@ export default {
   }
 
   &__chart {
-    @media @tablet {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 
     &__doghnut {
-      margin: 0;
-      max-width: 350px;
-
-      @media @tablet {
-        margin: 0 20px 0 0;
-        width: 50%;
-        flex: 1 0 50%;
+      @media @mobile {
+        margin: 0;
+        max-width: 250px;
       }
+
+      max-width: 350px;
+      margin: 0 20px 0 0;
+      width: 50%;
+      flex: 1 0 50%;
     }
 
     &__legend {
+      @media @mobile {
+        width: auto;
+        flex: none;
+      }
+
       list-style: none;
-      padding: 20px 0 0 20px;
+      padding: 0;
       margin: 0;
       display: flex;
       flex-flow: column;
       justify-content: center;
-
-      @media @tablet {
-        padding: 0;
-        flex: 1 0 40%;
-        width: 40%;
-      }
+      flex: 1 0 40%;
+      width: 40%;
 
       &__item {
+        @media @mobile {
+          font-size: 13px;
+        }
+
         font-size: 15px;
         padding-bottom: 12px;
       }

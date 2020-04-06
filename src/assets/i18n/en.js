@@ -6,7 +6,7 @@ export default {
     nextBtn: 'Next',
     stopBtn: 'Finish tour',
     step1:
-      'Welcome! You can see your total summary of groups and items in your portfolio.',
+      'Welcome! Here you can see your Account Balance and all of your finance groups and items.',
     step2: 'Here you have a chart view of your Finance Balances.',
     step3: 'Add your own Finance Group like Stocks, Krypto, Cash.',
     step4:
@@ -54,11 +54,14 @@ export default {
     logout: 'Logout',
   },
   table: {
-    tableGroupHeadline: 'My Portfolio',
+    tableGroupHeadline: 'Account Balance',
+    tableAllGroupsHeadline: 'All Groups',
+    totalGroups: 'Total Groups',
+    totalItems: 'Total Items',
     headlines: {
       name: 'Name',
       description: 'Description',
-      totalInvested: 'Invested',
+      totalInvested: 'Total Invested',
       profit: 'Profit',
       actions: 'Actions',
       invested: 'Invested',
@@ -73,7 +76,7 @@ export default {
     },
   },
   chart: {
-    capitalRationHeadline: 'Capital Ratio in Percent',
+    capitalRationHeadline: 'Asset Distribution in Percent',
     customLineBarHeadline: 'Listed by Items',
     noGroup: 'No Capital Group added yet.',
     noItems: 'No Items available. Add some Items!',
