@@ -11,6 +11,11 @@
 <script>
 import { mapState } from 'vuex'
 export default {
+  props: {
+    drawer: {
+      type: [Boolean],
+    },
+  },
   // https://github.com/pulsardev/vue-tour/wiki
   data() {
     return {
@@ -53,8 +58,13 @@ export default {
     }
   },
   watch: {
+    drawer(open) {
+      if (this.showTour && open) {
+        this.$tours['TourApp'].start()
+      }
+    },
     showTour(noData) {
-      if (noData) {
+      if (noData && this.drawer) {
         this.$tours['TourApp'].start()
       }
     },
@@ -70,11 +80,19 @@ export default {
 }
 </script>
 <style lang="less">
+@import '../assets/less/structure.less';
+
 .tour-app {
   // overwrite tour css
   .v-step {
     background: #00695c !important;
-    left: 100px !important;
+    left: 20px !important;
+    width: 260px;
+
+    @media @tablet {
+      width: 300px;
+      left: 100px !important;
+    }
 
     &__arrow {
       border-color: #00695c !important;

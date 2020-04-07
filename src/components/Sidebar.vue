@@ -64,9 +64,9 @@
           mdi-help-circle
         </v-icon>
       </div>
-    </v-navigation-drawer>
 
-    <TourApp />
+      <TourApp :drawer="drawer" />
+    </v-navigation-drawer>
   </div>
 </template>
 
@@ -179,6 +179,15 @@ export default {
 
 <style lang="less">
 @import '../assets/less/structure.less';
+
+// overwrite navigation-drawer
+.v-navigation-drawer {
+  overflow: visible !important;
+}
+
+.v-navigation-drawer__content {
+  overflow: visible !important;
+}
 
 .sidebar {
   &__actions {

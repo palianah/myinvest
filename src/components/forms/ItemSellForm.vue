@@ -67,9 +67,7 @@ export default {
     saveItem() {
       if (this.validate()) {
         const newData = this.calculateValues()
-        // ist korrekt, aber wegen real_stock_price stimmt es nicht überein beim reload!
-        // profit nicht mit aktuellen Form angegebenen Preis, sondern real_price berechnen!
-        // console.log('newData: ', newData)
+        
         this.$store.dispatch('updateFinanceItem', {
           ...this.formProps,
           ...newData,
@@ -79,15 +77,14 @@ export default {
     },
     calculateValues() {
       const formAmount = parseFloat(this.formData.amount)
-      const propsStockPrice = parseFloat(this.formProps.averageStockPrice)
+      const formStockPrice = parseFloat(this.formData.averageStockPrice)
+      const propsTotalInvested = parseFloat(this.formProps.totalInvested)
+      const propsRealPrice = parseFloat(this.formProps.real_price)
       const propsAmount = parseFloat(this.formProps.amount)
 
       const amount = propsAmount - formAmount
-      const totalInvested = amount * propsStockPrice
-      const currentValue = this.calculateCurrentValue(
-        formAmount,
-        propsStockPrice
-      )
+      const totalInvested = propsTotalInvested - (formAmount * formStockPrice)
+      const currentValue = amount * propsRealPrice
       const profit = currentValue - totalInvested
 
       return {
@@ -97,7 +94,6 @@ export default {
         amount,
       }
     },
-    // TODO: Bug calculating profit!
     calculateCurrentValue(formAmount, propsStockPrice) {
       const formStockPrice = parseFloat(this.formData.averageStockPrice)
       const propsCurrent = parseFloat(this.formProps.currentValue)

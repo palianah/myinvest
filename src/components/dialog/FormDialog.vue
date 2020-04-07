@@ -7,6 +7,7 @@
     <component
       v-bind:is="modalComponent"
       @close="$emit('close')"
+      @real-price-added="realPriceAdded"
       :editMode="editMode"
       :formProps="modalItem"
     ></component>
@@ -48,6 +49,11 @@ export default {
       if (!newValue) {
         this.$emit('close')
       }
+    },
+  },
+  methods: {
+    realPriceAdded(data) {
+      this.$emit('real-price-added', data)
     },
   },
   computed: {

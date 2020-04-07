@@ -134,6 +134,7 @@
       :modalItem="modalItem"
       :editMode="editMode"
       @close="closeFormDialog"
+      @real-price-added="realPriceAdded"
     />
     <ConfirmDialog
       :confirmOpen="confirmOpen"
@@ -281,6 +282,10 @@ export default {
         currentValue: curPrice,
         profit: curProfit,
       })
+    },
+    realPriceAdded(data) {
+      this.$set(this.stockData, data.symbol, data)
+      // this.updateItem(data, this.tableItems[this.tableItems.length - 1])
     },
   },
   computed: {

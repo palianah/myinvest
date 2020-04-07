@@ -88,6 +88,7 @@ export default {
     return {
       valid: true,
       showStockFormData: false,
+      real_stock_price: null,
       markets: ['US', 'DE'],
       emptyRule: [
         (v) => !!v || this.$vuetify.lang.t('$vuetify.forms.fieldRequired'),
@@ -127,10 +128,16 @@ export default {
     saveItem() {
       if (this.validate()) {
         if (!this.editMode) {
+          let profit = 0
+          let currentValue = this.formData.totalInvested
+          if (this.showStockFormData) {
+            currentValue = this.real_stock_price * this.formData.amount
+            profit = currentValue - this.formData.totalInvested
+          }
           this.$store.dispatch('addFinanceItem', {
             ...this.formData,
-            profit: 0,
-            currentValue: this.formData.totalInvested,
+            profit,
+            currentValue,
           })
         } else {
           this.$store.dispatch('updateFinanceItem', {
@@ -145,19 +152,27 @@ export default {
     },
     onQuotesChange(val) {
       this.formData.averageStockPrice = 20
-      FinanceService.quote(val).then((res) => {
-        const { data } = res
-        let price = 0
-        const dif = parseFloat(this.forex.value)
-        let real_price = 0
-        price = parseFloat(data.close)
-        real_price = price.toFixed(2)
-        if (this.formData.market === 'US') {
-          real_price = parseFloat(price / dif).toFixed(2)
-        }
-        this.formData.averageStockPrice = real_price
-        this.$refs.averageStockPrice.value = real_price // vuetify text-field bug, vue-warning!
-      })
+      FinanceService.quote(val)
+        .then((res) => {
+          const { data } = res
+          let price = 0
+          const dif = parseFloat(this.forex.value)
+          let real_price = 0
+          price = parseFloat(data.close)
+          real_price = price.toFixed(2)
+          if (this.formData.market === 'US') {
+            real_price = parseFloat(price / dif).toFixed(2)
+          }
+          this.formData.averageStockPrice = real_price
+          this.real_stock_price = real_price
+          this.$refs.averageStockPrice.value = real_price // vuetify text-field bug, vue-warning!
+          // emit result directly to table
+          this.$emit('real-price-added', {
+            ...data,
+            real_price,
+          })
+        })
+        .catch((e) => console.error('onQuotesChange error: ', e))
     },
     calulateTotalInvestedValue() {
       if (this.formData.amount && this.formData.averageStockPrice) {
@@ -166,20 +181,7 @@ export default {
           parseFloat(this.formData.averageStockPrice)
         this.formData.totalInvested = parseFloat(calc.toFixed(2))
         this.$refs.totalInvested.value = parseFloat(calc.toFixed(2)) // vuetify text-field bug, vue-warning!
-        if (this.formData.currentValue) {
-          this.calulateCurrentValue()
-        }
       }
-    },
-    calulateCurrentValue() {
-      // differenz amount * averageStockPrice + this.formData.currentValue
-      // const calc = parseFloat(this.formProps.amount) - parseFloat(this.)
-      // console.log(
-      //   'propsAmount|amount|currentValue: ',
-      //   this.formProps.amount,
-      //   this.formData.amount,
-      //   this.formData.currentValue
-      // )
     },
     validate() {
       return this.$refs.form.validate()
