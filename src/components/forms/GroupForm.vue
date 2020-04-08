@@ -18,6 +18,18 @@
       :rules="descriptionRules"
       required
     ></v-text-field>
+    <br />
+    <p>
+      {{ $vuetify.lang.t('$vuetify.forms.groupTypeTitle') }}
+    </p>
+    <v-radio-group v-model="formData.groupType">
+      <v-radio
+        v-for="group in groupTypes"
+        :key="group.value"
+        :label="group.label"
+        :value="group.value"
+      ></v-radio>
+    </v-radio-group>
 
     <div class="text-center">
       <v-btn type="submit" min-width="150" class="ma-2" color="primary">
@@ -45,6 +57,24 @@ export default {
   data() {
     return {
       valid: true,
+      groupTypes: [
+        {
+          value: 'trade',
+          label: this.$vuetify.lang.t('$vuetify.forms.groupTypeTrade'),
+        },
+        {
+          value: 'cash',
+          label: this.$vuetify.lang.t('$vuetify.forms.groupTypeCash'),
+        },
+        {
+          value: 'p2p',
+          label: this.$vuetify.lang.t('$vuetify.forms.groupTypeP2P'),
+        },
+        {
+          value: 'default',
+          label: this.$vuetify.lang.t('$vuetify.forms.groupTypeDefault'),
+        },
+      ],
       titleRules: [
         (v) => !!v || this.$vuetify.lang.t('$vuetify.forms.titleRequired'),
       ],
@@ -57,12 +87,12 @@ export default {
         : {
             title: '',
             description: '',
+            groupType: 'trade',
           },
     }
   },
   methods: {
     saveGroup() {
-      // TODO: check if groupData.title exists already, not valid!
       if (this.validate()) {
         if (!this.editMode) {
           this.$store.dispatch('addFinanceGroup', this.formData)

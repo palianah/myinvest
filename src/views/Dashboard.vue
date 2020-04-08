@@ -3,10 +3,10 @@
     <FinanceGroupTable />
 
     <v-expansion-panels v-model="panel" multiple flat tile>
-      <v-expansion-panel v-for="group in sortedGroups" :key="group.title">
+      <v-expansion-panel v-for="group in sortedGroups" :key="group.key">
         <component
-          v-bind:is="itemComponent(group.title)"
-          :title="group.title"
+          v-bind:is="itemComponent(group.groupType)"
+          :group="group"
         ></component>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -63,14 +63,11 @@ export default {
       }
       this.panel = panel
     },
-    itemComponent(title) {
+    itemComponent(groupType) {
       let component = ''
-      switch (title.toLowerCase()) {
-        case 'stock':
-        case 'etf':
-        case 'crypto':
-        case 'krypto':
-          component = 'stock-item'
+      switch (groupType) {
+        case 'trade':
+          component = 'trade-item'
           break
         case 'p2p':
           component = 'p2p-item'
@@ -96,7 +93,7 @@ export default {
     FinanceGroupTable,
     'default-item': FinanceItemTable,
     'p2p-item': FinanceItemTableP2P,
-    'stock-item': FinanceItemTableStock,
+    'trade-item': FinanceItemTableStock,
     'cash-item': FinanceItemTableCash,
   },
 }

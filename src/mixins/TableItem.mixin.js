@@ -2,6 +2,9 @@ import { filter } from 'lodash'
 
 // mixin used for FinanceItemTable Components
 const tableItem = {
+  props: {
+    group: [Object],
+  },
   data() {
     return {
       formOpen: false,
@@ -67,7 +70,9 @@ const tableItem = {
       this.modalComponent = 'item'
       this.editMode = false
       this.modalItem = {
-        exposition: this.title,
+        exposition: {
+          value: this.group.key,
+        },
       }
     },
     deleteItem(item) {
@@ -90,7 +95,9 @@ const tableItem = {
   },
   computed: {
     tableItems() {
-      return filter(this.financeItems, { exposition: this.title })
+      return filter(this.financeItems, (g) => {
+        return g.exposition.value === this.group.key
+      })
     },
     totalCapitalAsset() {
       let value = 0

@@ -236,13 +236,13 @@ export default new Vuex.Store({
           .catch((e) => console.error(e))
       }
     },
-    deleteFinanceGroup({ state, dispatch, commit }, item) {
-      DataService.deleteGroup(item.key)
+    deleteFinanceGroup({ state, dispatch, commit }, group) {
+      DataService.deleteGroup(group.key)
         .then(() => {
-          commit('DELETE_FINANCE_GROUP', item.key)
+          commit('DELETE_FINANCE_GROUP', group.key)
           // delete all items from this group
           state.financeItems.forEach((item) => {
-            if (item.exposition === item.title) {
+            if (group.key === item.exposition.value) {
               dispatch('deleteFinanceItem', item.key)
             }
           })
@@ -276,7 +276,7 @@ export default new Vuex.Store({
         })
         .catch((e) => console.error(e))
     },
-    getFinanceItems({ commit, state }) {
+    getFinanceItems({ commit, state, dispatch }) {
       if (!state.userId) return []
 
       // check expireDate if expired, refresh token!
@@ -288,6 +288,9 @@ export default new Vuex.Store({
           .then((res) => {
             if (Object.keys(res.data).length) {
               commit('ADD_FINANCE_ITEM', { ...res.data, multiple: true })
+            } else {
+              // if no item found, dispatch..
+              dispatch('convertExchange', 'EUR/USD')
             }
           })
           .catch((e) => console.error(e))
@@ -369,14 +372,18 @@ export default new Vuex.Store({
     },
   },
   getters: {
-    groupNames: (state, getters) => {
+    allGroups: (state, getters) => {
       if (!state.financeGroups.length || !getters.sortedGroups.length) return []
 
-      const groupNames = []
+      const allGroups = []
       getters.sortedGroups.forEach((group, index) => {
-        groupNames[index] = group.title
+        allGroups[index] = {
+          title: group.title,
+          value: group.key,
+          groupType: group.groupType,
+        }
       })
-      return groupNames
+      return allGroups
     },
     sortedItemsByPrice: (state) => {
       if (!state.financeItems.length) return []
@@ -407,7 +414,9 @@ export default new Vuex.Store({
       if (!state.financeGroups.length || !getters.sortedGroups.length) return []
 
       return getters.sortedGroups.filter((group) => {
-        const expos = filter(state.financeItems, { exposition: group.title })
+        const expos = filter(state.financeItems, (g) => {
+          return g.exposition.value === group.key
+        })
         let totalInvested = 0
         let currentValue = 0
         if (expos.length) {

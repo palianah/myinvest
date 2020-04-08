@@ -2,7 +2,9 @@
   <v-form v-model="valid" @submit.prevent="saveItem" ref="form" lazy-validation>
     <v-select
       v-model="formData.exposition"
-      :items="groupNames"
+      :items="allGroups"
+      item-text="title"
+      item-value="value"
       :rules="emptyRule"
       :label="$vuetify.lang.t('$vuetify.forms.financeGroup')"
       required
@@ -94,7 +96,7 @@ export default {
         (v) => !!v || this.$vuetify.lang.t('$vuetify.forms.fieldRequired'),
       ],
       formData: this.formProps
-        ? { ...this.formProps }
+        ? { ...this.formProps, exposition: this.formProps.exposition.value }
         : {
             exposition: null,
             title: '',
@@ -109,14 +111,9 @@ export default {
   watch: {
     'formData.exposition': {
       immediate: true,
-      handler(val) {
-        if (!val) return
-        if (
-          val.toLowerCase().includes('etf') ||
-          val.toLowerCase().includes('stock') ||
-          val.toLowerCase().includes('crypto') ||
-          val.toLowerCase().includes('krypto')
-        ) {
+      handler(expo) {
+        if (!expo) return
+        if (this.expoType(expo) === 'trade') {
           this.showStockFormData = true
         } else {
           this.showStockFormData = false
@@ -127,6 +124,7 @@ export default {
   methods: {
     saveItem() {
       if (this.validate()) {
+        const exposition = this.findCurrentExposition()
         if (!this.editMode) {
           let profit = 0
           let currentValue = this.formData.totalInvested
@@ -136,18 +134,33 @@ export default {
           }
           this.$store.dispatch('addFinanceItem', {
             ...this.formData,
+            exposition,
             profit,
             currentValue,
           })
         } else {
           this.$store.dispatch('updateFinanceItem', {
             ...this.formData,
+            exposition,
             profit:
               parseFloat(this.formData.currentValue) -
               parseFloat(this.formData.totalInvested),
           })
         }
         this.$emit('close')
+      }
+    },
+    expoType(key) {
+      const group = this.allGroups.find((group) => group.value === key)
+      return group.groupType
+    },
+    findCurrentExposition() {
+      const expo = this.allGroups.find(
+        (group) => group.value === this.formData.exposition
+      )
+      return {
+        title: expo.title,
+        value: this.formData.exposition, // key
       }
     },
     onQuotesChange(val) {
@@ -159,7 +172,7 @@ export default {
           const dif = parseFloat(this.forex.value)
           let real_price = 0
           price = parseFloat(data.close)
-          real_price = price.toFixed(2)
+          real_price = parseFloat(price.toFixed(2))
           if (this.formData.market === 'US') {
             real_price = parseFloat(price / dif).toFixed(2)
           }
@@ -189,7 +202,7 @@ export default {
   },
   computed: {
     ...mapState(['forex']),
-    ...mapGetters(['groupNames']),
+    ...mapGetters(['allGroups']),
   },
 }
 </script>

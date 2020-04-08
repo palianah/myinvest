@@ -171,7 +171,13 @@ export default {
   },
   computed: {
     ...mapState(['financeGroups', 'financeItems', 'showTour']),
-    ...mapGetters(['groupNames', 'groupPercentValues']),
+    ...mapGetters(['allGroups', 'groupPercentValues']),
+    groupNames() {
+      const groupNames = this.allGroups.map(groups => {
+        return groups.title
+      })
+      return groupNames
+    }
   },
   components: {
     DoghnutChart,

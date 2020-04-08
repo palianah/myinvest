@@ -3,7 +3,7 @@
     <v-card>
       <v-expansion-panel-header>
         <v-card-title class="dashboard__table__title">
-          <div>{{ title }}</div>
+          <div>{{ group.title }}</div>
           <div>
             <v-icon
               :title="$vuetify.lang.t('$vuetify.sidebar.addItem')"
@@ -107,9 +107,6 @@ import TableItemMixin from '@/mixins/TableItem.mixin'
 
 export default {
   mixins: [TableItemMixin],
-  props: {
-    title: [String],
-  },
   computed: {
     ...mapState(['financeItems']),
   },

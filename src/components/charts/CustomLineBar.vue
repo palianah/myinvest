@@ -26,7 +26,7 @@
             ></span>
             <span class="custom-linebar__details__text"> {{ item.title }}</span>
             <span class="custom-linebar__details__text">
-              ({{ item.exposition }})
+              ({{ item.exposition.title }})
             </span>
             <span class="custom-linebar__details__text align-right">
               {{ itemPercent(item.currentValue) }}</span
