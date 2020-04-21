@@ -24,17 +24,12 @@ import FinanceItemTableCash from '@/components/tables/FinanceItemTableCash'
 export default {
   data() {
     return {
-      isMobile: false,
       panel: [],
     }
   },
   watch: {
-    sortedGroups(newValue) {
-      if (newValue && this.isMobile) {
-        this.panel = []
-      } else {
-        this.openAllPanels()
-      }
+    sortedGroups() {
+      this.openAllPanels()
     },
   },
   computed: {
@@ -45,15 +40,6 @@ export default {
     },
   },
   methods: {
-    onResize() {
-      if (window.innerWidth < 768) {
-        this.isMobile = true
-        this.panel = []
-      } else {
-        this.isMobile = false
-        this.openAllPanels()
-      }
-    },
     openAllPanels() {
       const panel = []
       const iterator = this.sortedGroups.keys()
@@ -81,13 +67,6 @@ export default {
       }
       return component
     },
-  },
-  created() {
-    window.addEventListener('resize', this.onResize)
-    this.onResize()
-  },
-  destroyed() {
-    window.removeEventListener('resize', this.onResize)
   },
   components: {
     FinanceGroupTable,

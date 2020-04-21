@@ -211,8 +211,15 @@ export default {
               // https://vuejs.org/v2/guide/reactivity.html#For-Objects
               if (this.tableItems.length > 1) {
                 Object.values(res).forEach((data, i) => {
-                  this.$set(this.stockData, data.symbol, data)
-                  this.updateItem(data, this.tableItems[i])
+                  if (data.code && data.code === 400) {
+                    console.log('real-price: ', this.stockData)
+                    this.$set(this.stockData, this.tableItems[i].stockID, {
+                      real_price: '-'
+                    })
+                  } else {
+                    this.$set(this.stockData, data.symbol, data)
+                    this.updateItem(data, this.tableItems[i])
+                  }
                 })
               } else {
                 this.$set(this.stockData, res.symbol, res)
