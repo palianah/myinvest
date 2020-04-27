@@ -29,13 +29,22 @@
           </template>
           <template v-slot:item.realStockPrice="{ item }">
             <span v-if="stockData && stockData[item.stockID]">
-              {{ stockData[item.stockID].real_price }}
-              <span
-                :class="stockDataColor(stockData[item.stockID].percent_change)"
-              >
-                ({{ stockDataPercent(stockData[item.stockID].percent_change) }}
-                %)
-              </span>
+              <template v-if="stockData[item.stockID].real_price">
+                {{ stockData[item.stockID].real_price }}
+                <span
+                  :class="
+                    stockDataColor(stockData[item.stockID].percent_change)
+                  "
+                >
+                  ({{
+                    stockDataPercent(stockData[item.stockID].percent_change)
+                  }}
+                  %)
+                </span>
+              </template>
+              <template v-else>
+                -
+              </template>
             </span>
             <span v-else>
               <v-skeleton-loader
@@ -181,6 +190,7 @@ export default {
         {
           text: this.$vuetify.lang.t('$vuetify.table.headlines.realtimePrice'),
           value: 'realStockPrice',
+          align: 'center',
         },
         {
           text: this.$vuetify.lang.t('$vuetify.table.headlines.profit'),
@@ -212,9 +222,8 @@ export default {
               if (this.tableItems.length > 1) {
                 Object.values(res).forEach((data, i) => {
                   if (data.code && data.code === 400) {
-                    console.log('real-price: ', this.stockData)
                     this.$set(this.stockData, this.tableItems[i].stockID, {
-                      real_price: '-'
+                      real_price: null,
                     })
                   } else {
                     this.$set(this.stockData, data.symbol, data)

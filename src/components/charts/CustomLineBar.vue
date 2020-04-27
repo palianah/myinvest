@@ -24,14 +24,18 @@
               class="custom-linebar__details__bg"
               :style="{ backgroundColor: itemBg(index) }"
             ></span>
-            <span class="custom-linebar__details__text"> {{ item.title }}</span>
             <span class="custom-linebar__details__text">
-              ({{ item.exposition.title }})
+              {{ item.title }} ({{ item.exposition.title }})
+              <slot name="currentValue" v-bind:item="item"></slot>
             </span>
             <span class="custom-linebar__details__text align-right">
               {{ itemPercent(item.currentValue) }}</span
             >
           </div>
+        </div>
+        <div class="custom-linebar__footer">
+          {{ $vuetify.lang.t('$vuetify.table.footer.total') }}:
+          <b><TweenNumber :value="totalCapitalAsset" /> €</b>
         </div>
       </div>
       <div v-else>
@@ -43,6 +47,7 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
+import TweenNumber from '@/components/TweenNumber.vue'
 
 export default {
   data() {
@@ -98,6 +103,9 @@ export default {
     if (this.showTour !== null) {
       this.isLoading = false
     }
+  },
+  components: {
+    TweenNumber,
   },
 }
 </script>

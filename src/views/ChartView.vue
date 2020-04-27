@@ -46,7 +46,11 @@
           <v-card-text class="dashboard__card__headline pa-0 pb-3">
             {{ $vuetify.lang.t('$vuetify.chart.customLineBarHeadline') }}
           </v-card-text>
-          <CustomLineBar />
+          <CustomLineBar>
+            <template v-slot:currentValue="{ item }">
+              <p class="ma-0"><TweenNumber :value="item.currentValue" /> €</p>
+            </template>
+          </CustomLineBar>
         </v-card>
       </v-col>
     </v-row>
@@ -58,6 +62,7 @@ import { mapState, mapGetters } from 'vuex'
 import { filter, find } from 'lodash'
 import DoghnutChart from '@/components/charts/DoghnutChart'
 import CustomLineBar from '@/components/charts/CustomLineBar'
+import TweenNumber from '@/components/TweenNumber.vue'
 
 export default {
   data() {
@@ -173,15 +178,16 @@ export default {
     ...mapState(['financeGroups', 'financeItems', 'showTour']),
     ...mapGetters(['allGroups', 'groupPercentValues']),
     groupNames() {
-      const groupNames = this.allGroups.map(groups => {
+      const groupNames = this.allGroups.map((groups) => {
         return groups.title
       })
       return groupNames
-    }
+    },
   },
   components: {
     DoghnutChart,
     CustomLineBar,
+    TweenNumber,
   },
 }
 </script>
