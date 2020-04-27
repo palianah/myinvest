@@ -2,7 +2,7 @@
   <div class="dashboard px-2 pt-2">
     <FinanceGroupTable />
 
-    <v-expansion-panels v-model="panel" multiple flat tile>
+    <v-expansion-panels v-model="openedPanels" multiple flat tile>
       <v-expansion-panel v-for="group in sortedGroups" :key="group.key">
         <component
           v-bind:is="itemComponent(group.groupType)"
@@ -24,12 +24,14 @@ import FinanceItemTableCash from '@/components/tables/FinanceItemTableCash'
 export default {
   data() {
     return {
-      panel: [],
+      openedPanels: [],
     }
   },
   watch: {
     sortedGroups() {
-      this.openAllPanels()
+      if (this.isDesktop()) {
+        this.openAllPanels()
+      }
     },
   },
   computed: {
@@ -40,14 +42,20 @@ export default {
     },
   },
   methods: {
+    isDesktop() {
+      if (window.innerWidth >= 768) {
+        return true
+      }
+      return false
+    },
     openAllPanels() {
-      const panel = []
+      const panels = []
       const iterator = this.sortedGroups.keys()
 
       for (const key of iterator) {
-        panel.push(key)
+        panels.push(key)
       }
-      this.panel = panel
+      this.openedPanels = panels
     },
     itemComponent(groupType) {
       let component = ''
@@ -67,6 +75,11 @@ export default {
       }
       return component
     },
+  },
+  created() {
+    if (this.isDesktop()) {
+      this.openAllPanels()
+    }
   },
   components: {
     FinanceGroupTable,
