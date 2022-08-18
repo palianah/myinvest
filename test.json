@@ -1,5 +1,4 @@
-
-var SPECIAL_PRICE_FORMAT = {
+{
   'cs-CZ': {
     priceFormat: {
       currencyFormat: {
