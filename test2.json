@@ -28,7 +28,7 @@
         priceCurrencySuffix: '.-',
       },
       overrideSeparatorConfig: {
-        groupSeparator: "'", // eslint-disable-line
+        groupSeparator: "'",
         decimalSeparator: '.',
       },
     },
@@ -264,7 +264,7 @@
         priceCurrencySuffix: '.-',
       },
       overrideSeparatorConfig: {
-        groupSeparator: "'", // eslint-disable-line
+        groupSeparator: "'",
         decimalSeparator: '.',
       },
     },
@@ -304,7 +304,7 @@
         priceCurrencySuffix: '.-',
       },
       overrideSeparatorConfig: {
-        groupSeparator: "'", // eslint-disable-line
+        groupSeparator: "'",
         decimalSeparator: '.',
       },
     },
@@ -470,4 +470,4 @@
       },
     },
   },
-};
+}
