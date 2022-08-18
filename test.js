@@ -1,4 +1,4 @@
-export const SPECIAL_PRICE_FORMAT = {
+var SPECIAL_PRICE_FORMAT = {
   'cs-CZ': {
     priceFormat: {
       currencyFormat: {
