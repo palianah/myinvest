@@ -1,8 +1,8 @@
 {
   'cs-CZ': {
-    priceFormat: {
-      currencyFormat: {
-        priceCurrencySuffix: ' Kč'
+    'priceFormat': {
+      'currencyFormat': {
+        'priceCurrencySuffix': ' Kč'
       },
     },
   },
